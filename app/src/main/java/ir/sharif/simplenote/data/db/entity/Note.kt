@@ -10,8 +10,8 @@ data class Note(
     val id: Int,
     val title: String,
     val description: String,
-    val created_at: Date,
-    val updated_at: Date,
-    val creator_name: String,
-    val creator_username: String
+    val createdAt: Date,
+    val updatedAt: Date,
+    val creatorName: String,
+    val creatorUsername: String
 )
