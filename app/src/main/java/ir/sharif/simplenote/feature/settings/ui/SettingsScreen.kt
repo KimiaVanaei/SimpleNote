@@ -73,15 +73,6 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // --- General / Account section ---
-            SettingsOption(
-                title = "Edit Profile",
-                onClick = {
-                    viewModel.onEvent(SettingsEvent.OnClickEditProfile)
-                    onNavigateToEditProfile()
-                }
-            )
-
             SettingsOption(
                 title = "Change Password",
                 onClick = {
@@ -90,34 +81,17 @@ fun SettingsScreen(
                 }
             )
 
-            // --- Preferences ---
-            // Open a dialog that controls Email + Push toggles (kept in ViewModel)
             SettingsOption(
                 title = "Notifications",
                 onClick = { viewModel.onEvent(SettingsEvent.OnOpenNotificationsDialog) }
             )
 
             SettingsOption(
-                title = "Dark Mode",
-                rightContent = {
-                    Switch(
-                        checked = state.darkModeEnabled,
-                        onCheckedChange = { viewModel.onEvent(SettingsEvent.OnToggleDarkMode) }
-                    )
-                }
-            )
-
-            // --- About / Logout ---
-            SettingsOption(
                 title = "Logout",
                 onClick = { viewModel.onEvent(SettingsEvent.OnClickLogout) }
             )
 
-            SettingsOption(
-                title = "App Version",
-                rightContent = { Text(text = "v1.1", style = MaterialTheme.typography.bodyMedium) },
-                onClick = {} // info row
-            )
+            Text(text = "v1.1", style = MaterialTheme.typography.bodyMedium)
         }
     }
 
