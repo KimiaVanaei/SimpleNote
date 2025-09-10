@@ -1,6 +1,5 @@
-package ir.sharif.simplenote.ui.features.settings
+package ir.sharif.simplenote.feature.settings.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,8 +32,8 @@ import ir.sharif.simplenote.ui.theme.TextStyles
 @Composable
 fun ProfileSection(
     modifier: Modifier = Modifier,
-    userName: String,
-    userEmail: String,
+    userName: String = "Your Name",
+    userEmail: String = "you@example.com",
     onEditProfileClick: () -> Unit
 ) {
     Column(
@@ -90,8 +89,9 @@ fun ProfileSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(
-                    BorderStroke(1.dp, ColorPalette.PrimaryBase),
-                    RoundedCornerShape(100.dp)
+                    width = 1.dp,
+                    color = ColorPalette.PrimaryBase,
+                    shape = RoundedCornerShape(100.dp)
                 )
                 .clickable(onClick = onEditProfileClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
