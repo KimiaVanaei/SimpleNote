@@ -7,6 +7,10 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/compiler.xml
+/.idea/deviceManager.xml
+/.kotlin/errors/errors-1757422388171.log
+
 .DS_Store
 /build
 /captures
