@@ -60,7 +60,31 @@ dependencies {
     implementation("com.woowla.compose.icon.collections:heroicons-android:2.2.0")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+    testImplementation("junit:junit:4.13.2")
+    // Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // Moshi converter (for JSON serialization)
+    implementation ("com.squareup.retrofit2:converter-moshi:2.11.0")
+
+    // OkHttp (Retrofit uses it under the hood)
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Coroutines support (for suspend functions)
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    // WorkManager (background tasks)
+    implementation ("androidx.work:work-runtime:2.9.0")
+
+    // Kotlin coroutines + WorkManager extensions
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Robolectric for faking Android environment
+    testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("androidx.room:room-testing:$room_version")
+    testImplementation("androidx.test:core:1.5.0")
     ksp("androidx.room:room-compiler:$room_version")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
