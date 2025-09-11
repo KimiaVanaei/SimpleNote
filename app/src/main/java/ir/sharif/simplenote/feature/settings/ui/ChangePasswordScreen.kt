@@ -3,15 +3,19 @@ package ir.sharif.simplenote.feature.settings.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +25,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,9 +52,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ir.sharif.simplenote.ui.theme.ColorPalette
-import ir.sharif.simplenote.ui.theme.SimpleNoteTheme
-import ir.sharif.simplenote.ui.theme.TextStyles
+import com.woowla.compose.icon.collections.heroicons.Heroicons
+import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronLeft
+import ir.sharif.simplenote.core.designsystem.ColorPalette
+import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
+import ir.sharif.simplenote.core.designsystem.TextStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,24 +78,35 @@ fun ChangePasswordScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = ColorPalette.PrimaryBase
-                        )
-                    }
-                },
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = "Change Password",
                         style = TextStyles.textBaseMedium,
                         color = ColorPalette.NeutralBlack,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        textAlign = TextAlign.Center
                     )
+                },
+                navigationIcon = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .clickable(onClick = onNavigateBack)
+                    ) {
+                        Icon(
+                            imageVector = Heroicons.Outline.ChevronLeft,
+                            contentDescription = "Back",
+                            tint = ColorPalette.PrimaryBase,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = TextStyles.textBaseMedium,
+                            color = ColorPalette.PrimaryBase
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ColorPalette.NeutralWhite,
@@ -102,7 +121,7 @@ fun ChangePasswordScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ColorPalette.PrimaryBackground)
+                .background(ColorPalette.NeutralWhite)
         ) {
             Column(
                 modifier = Modifier

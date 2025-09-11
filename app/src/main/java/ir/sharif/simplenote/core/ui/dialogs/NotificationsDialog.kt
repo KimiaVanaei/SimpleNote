@@ -1,4 +1,4 @@
-package ir.sharif.simplenote.feature.settings.ui.dialogs
+package ir.sharif.simplenote.core.ui.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,9 +22,9 @@ import androidx.compose.ui.window.DialogProperties
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.XMark
-import ir.sharif.simplenote.ui.theme.ColorPalette
-import ir.sharif.simplenote.ui.theme.SimpleNoteTheme
-import ir.sharif.simplenote.ui.theme.TextStyles
+import ir.sharif.simplenote.core.designsystem.ColorPalette
+import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
+import ir.sharif.simplenote.core.designsystem.TextStyles
 
 /**
  * Controlled dialog: all state comes from the caller.

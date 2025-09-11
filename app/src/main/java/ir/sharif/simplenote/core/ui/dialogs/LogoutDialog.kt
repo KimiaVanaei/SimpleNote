@@ -1,4 +1,4 @@
-package ir.sharif.simplenote.feature.settings.ui.dialogs
+package ir.sharif.simplenote.core.ui.dialogs
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -15,9 +15,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import ir.sharif.simplenote.ui.theme.ColorPalette
-import ir.sharif.simplenote.ui.theme.SimpleNoteTheme
-import ir.sharif.simplenote.ui.theme.TextStyles
+import ir.sharif.simplenote.core.designsystem.ColorPalette
+import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
+import ir.sharif.simplenote.core.designsystem.TextStyles
 
 @Composable
 fun LogoutDialog(

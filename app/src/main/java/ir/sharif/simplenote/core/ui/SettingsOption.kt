@@ -1,31 +1,56 @@
 package ir.sharif.simplenote.core.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ir.sharif.simplenote.core.designsystem.TextStyles
+import ir.sharif.simplenote.core.designsystem.ColorPalette
 
-/**
- * Reusable settings row.
- *
- * title        -> main text (required)
- * icon         -> optional leading icon (ImageVector)
- * rightContent -> optional trailing composable (e.g., Switch)
- * onClick      -> whole row click (optional)
- */
+@Composable
+fun CustomIcon(
+    icon: Any,
+    contentDescription: String,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    when (icon) {
+        is Int -> Icon(
+            painter = painterResource(id = icon),
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = modifier
+        )
+        is ImageVector -> Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = modifier
+        )
+        else -> throw IllegalArgumentException("Unsupported icon type")
+    }
+}
+
 @Composable
 fun SettingsOption(
-    title: String,
     modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    rightContent: (@Composable () -> Unit)? = null,
+    icon: Any, // <-- now supports both Int and ImageVector
+    label: String,
     onClick: (() -> Unit)? = null,
+    labelColor: Color = ColorPalette.NeutralBlack,
+    iconTint: Color = ColorPalette.NeutralBlack,
+    rightContent: @Composable (() -> Unit) = {}
 ) {
     Row(
         modifier = modifier
@@ -34,22 +59,21 @@ fun SettingsOption(
                 if (onClick != null) Modifier.clickable { onClick() } else Modifier
             )
             .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (icon != null) {
-            Icon(imageVector = icon, contentDescription = null)
-            Spacer(Modifier.width(12.dp))
-        }
-
+        CustomIcon(
+            icon = icon,
+            contentDescription = "Icon",
+            tint = iconTint,
+            modifier = Modifier.size(20.dp)
+        )
         Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
+            text = label,
+            style = TextStyles.textBaseMedium,
+            color = labelColor,
             modifier = Modifier.weight(1f)
         )
-
-        if (rightContent != null) {
-            Spacer(Modifier.width(12.dp))
-            rightContent()
-        }
+        rightContent()
     }
 }
