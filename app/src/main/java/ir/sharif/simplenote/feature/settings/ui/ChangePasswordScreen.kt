@@ -79,6 +79,7 @@ fun ChangePasswordScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
+                windowInsets = TopAppBarDefaults.windowInsets,
                 title = {
                     Text(
                         text = "Change Password",
@@ -111,10 +112,7 @@ fun ChangePasswordScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ColorPalette.NeutralWhite,
                     titleContentColor = ColorPalette.NeutralBlack
-                ),
-                modifier = Modifier
-                    .height(60.dp)
-                    .background(ColorPalette.NeutralWhite)
+                )
             )
         }
     ) { innerPadding ->

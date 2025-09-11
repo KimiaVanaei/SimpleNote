@@ -88,7 +88,7 @@ fun SettingsScreen(
         },
         bottomBar = {
             Text(
-                text = "Makarya Notes v1.1",
+                text = "Sharif Notes v1.1",
                 style = TextStyles.text2Xs,
                 color = ColorPalette.NeutralBaseGrey,
                 textAlign = TextAlign.Center,

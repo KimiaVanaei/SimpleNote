@@ -53,7 +53,7 @@ fun NotificationsDialog(
             contentAlignment = Alignment.BottomCenter
         ) {
             Surface(
-                shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp),
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 color = ColorPalette.NeutralWhite,
                 modifier = Modifier
                     .fillMaxWidth()
