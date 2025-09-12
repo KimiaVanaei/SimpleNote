@@ -132,10 +132,15 @@ fun LoginScreen(
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Login", style = TextStyles.textBaseMedium, color = ColorPalette.NeutralWhite)
+                                Text(
+                                    "Login",
+                                    style = TextStyles.textBaseMedium,
+                                    color = ColorPalette.NeutralWhite,
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center
+                                )
                                 Icon(
                                     imageVector = Heroicons.Solid.ArrowRight,
                                     contentDescription = null,
