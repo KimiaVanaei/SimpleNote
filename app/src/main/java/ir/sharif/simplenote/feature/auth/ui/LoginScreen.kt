@@ -12,8 +12,6 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Check
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronLeft
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.PencilSquare
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
