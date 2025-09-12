@@ -29,6 +29,7 @@ import ir.sharif.simplenote.core.designsystem.TextStyles
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
+import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ChevronLeft
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,16 +50,27 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {}, // 👈 بدون تیتر
+                title = {},
                 navigationIcon = {
-                    Text(
-                        text = "< Back to Login",
-                        style = TextStyles.textSm,
-                        color = ColorPalette.PrimaryBase,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(start = 16.dp)
-                            .clickable { onBackToLoginClick() }
-                    )
+                            .padding(start = 8.dp)
+                            .clickable(onClick = onBackToLoginClick)
+                    ) {
+                        Icon(
+                            imageVector = Heroicons.Solid.ChevronLeft,
+                            contentDescription = null,
+                            tint = ColorPalette.PrimaryBase,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Back to Login",
+                            style = TextStyles.textBaseMedium,
+                            color = ColorPalette.PrimaryBase
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ColorPalette.NeutralWhite
@@ -67,129 +79,133 @@ fun RegisterScreen(
         },
         containerColor = ColorPalette.NeutralWhite
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 24.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Register", style = TextStyles.text2XlBold, color = ColorPalette.NeutralBlack)
-                    Text("And start taking notes", style = TextStyles.textBase, color = ColorPalette.NeutralDarkGrey)
-                }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Register", style = TextStyles.text2XlBold, color = ColorPalette.NeutralBlack)
+                Text("And start taking notes", style = TextStyles.textBase, color = ColorPalette.NeutralDarkGrey)
             }
 
-            item {
-                LabeledTextField(
-                    label = "First Name",
-                    value = firstName,
-                    onValueChange = { firstName = it },
-                    placeholder = "Example: Taha",
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                )
-            }
+            Spacer(modifier = Modifier.height(32.dp))
 
-            item {
-                LabeledTextField(
-                    label = "Last Name",
-                    value = lastName,
-                    onValueChange = { lastName = it },
-                    placeholder = "Example: Hamifar",
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                )
-            }
-            
-            item {
-                LabeledTextField(
-                    label = "Username",
-                    value = username,
-                    onValueChange = { username = it },
-                    placeholder = "Example: @HamifarTaha",
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                )
-            }
-
-            item {
-                LabeledTextField(
-                    label = "Email Address",
-                    value = email,
-                    onValueChange = { email = it },
-                    placeholder = "Example: hamifar.taha@gmail.com",
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                )
-            }
-
-            item {
-                LabeledPasswordField(
-                    label = "Password",
-                    value = password,
-                    onValueChange = { password = it },
-                    visible = showPassword,
-                    onToggleVisibility = { showPassword = !showPassword },
-                    imeAction = ImeAction.Next
-                )
-            }
-
-            item {
-                LabeledPasswordField(
-                    label = "Retype Password",
-                    value = retypePassword,
-                    onValueChange = { retypePassword = it },
-                    visible = showRetype,
-                    onToggleVisibility = { showRetype = !showRetype },
-                    imeAction = ImeAction.Done
-                )
-            }
-
-            item {
-                Button(
-                    onClick = { onRegisterClick(firstName, lastName, username, email, password) },
-                    shape = RoundedCornerShape(100.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ColorPalette.PrimaryBase,
-                        contentColor = ColorPalette.NeutralWhite
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(40.dp),
+                contentPadding = PaddingValues(bottom = 24.dp)
+            ) {
+                item {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(32.dp),
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            "Register",
-                            style = TextStyles.textBaseMedium,
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Center
+                        LabeledTextField(
+                            label = "First Name",
+                            value = firstName,
+                            onValueChange = { firstName = it },
+                            placeholder = "Example: Taha",
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
                         )
-                        Icon(
-                            imageVector = Heroicons.Solid.ArrowRight,
-                            contentDescription = null,
-                            tint = ColorPalette.NeutralWhite,
-                            modifier = Modifier.size(20.dp)
+
+                        LabeledTextField(
+                            label = "Last Name",
+                            value = lastName,
+                            onValueChange = { lastName = it },
+                            placeholder = "Example: Hamifar",
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        )
+
+                        LabeledTextField(
+                            label = "Username",
+                            value = username,
+                            onValueChange = { username = it },
+                            placeholder = "Example: @HamifarTaha",
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        )
+
+                        LabeledTextField(
+                            label = "Email Address",
+                            value = email,
+                            onValueChange = { email = it },
+                            placeholder = "Example: hamifar.taha@gmail.com",
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        )
+
+                        LabeledPasswordField(
+                            label = "Password",
+                            value = password,
+                            onValueChange = { password = it },
+                            visible = showPassword,
+                            onToggleVisibility = { showPassword = !showPassword },
+                            imeAction = ImeAction.Next
+                        )
+
+                        LabeledPasswordField(
+                            label = "Retype Password",
+                            value = retypePassword,
+                            onValueChange = { retypePassword = it },
+                            visible = showRetype,
+                            onToggleVisibility = { showRetype = !showRetype },
+                            imeAction = ImeAction.Done
                         )
                     }
                 }
-            }
 
-            item {
-                Text(
-                    text = "Already have an account? Login here",
-                    style = TextStyles.textSm,
-                    color = ColorPalette.PrimaryBase,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onBackToLoginClick() }
-                )
+                item {
+                    Button(
+                        onClick = { onRegisterClick(firstName, lastName, username, email, password) },
+                        shape = RoundedCornerShape(100.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ColorPalette.PrimaryBase,
+                            contentColor = ColorPalette.NeutralWhite
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(54.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "Register",
+                                style = TextStyles.textBaseMedium,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center
+                            )
+                            Icon(
+                                imageVector = Heroicons.Solid.ArrowRight,
+                                contentDescription = null,
+                                tint = ColorPalette.NeutralWhite,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Already have an account? Login here",
+                        style = TextStyles.textSm,
+                        color = ColorPalette.PrimaryBase,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onBackToLoginClick() }
+                    )
+                }
             }
         }
     }
@@ -226,6 +242,7 @@ private fun LabeledTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
+                .height(54.dp)
         )
     }
 }
@@ -241,7 +258,7 @@ private fun LabeledPasswordField(
     onImeDone: () -> Unit = {}
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, style = TextStyles.textBaseBold, color = ColorPalette.NeutralBlack)
+        Text(text = label, style = TextStyles.textBaseMedium, color = ColorPalette.NeutralBlack)
         TextField(
             value = value,
             onValueChange = onValueChange,
@@ -267,6 +284,7 @@ private fun LabeledPasswordField(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
+                .height(54.dp)
         )
     }
 }
