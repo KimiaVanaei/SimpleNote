@@ -35,6 +35,7 @@ import ir.sharif.simplenote.core.designsystem.ColorPalette
 import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginClick: (String, String) -> Unit,
@@ -45,106 +46,142 @@ fun LoginScreen(
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(ColorPalette.NeutralWhite)
-            .padding(horizontal = 16.dp, vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-
-        Text(
-            text = "Let's Login",
-            style = TextStyles.text2XlBold,
-            color = ColorPalette.NeutralBlack
-        )
-        Text(
-            text = "And notes your idea",
-            style = TextStyles.textBase,
-            color = ColorPalette.NeutralDarkGrey
-        )
-
-        // Email Input Field
-        LabeledTextField(
-            label = "Email Address",
-            value = email,
-            onValueChange = { email = it },
-            placeholder = "Example: johndoe@gmail.com",
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        )
-
-        // Password Input Field
-        LabeledPasswordField(
-            label = "Password",
-            value = password,
-            onValueChange = { password = it },
-            visible = showPassword,
-            onToggleVisibility = { showPassword = !showPassword },
-            imeAction = ImeAction.Done
-        )
-
-        // Login Button
-        Button(
-            onClick = { onLoginClick(email, password) },
-            shape = RoundedCornerShape(100.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ColorPalette.PrimaryBase,
-                contentColor = ColorPalette.NeutralWhite
-            ),
-
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp)
-                .fillMaxWidth()
-                .height(54.dp)
+    Scaffold(
+        containerColor = ColorPalette.NeutralWhite
+    ) { innerPadding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(ColorPalette.NeutralWhite)
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+                horizontalAlignment = Alignment.Start
             ) {
-                Text("Login", style = TextStyles.textBaseMedium, color = ColorPalette.NeutralWhite)
-                Icon(
-                    imageVector = Heroicons.Solid.ArrowRight,
-                    contentDescription = null,
-                    tint = ColorPalette.NeutralWhite,
-                    modifier = Modifier.size(20.dp)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Let's Login",
+                        style = TextStyles.text2XlBold,
+                        color = ColorPalette.NeutralBlack
+                    )
+                    Text(
+                        text = "And notes your idea",
+                        style = TextStyles.textBase,
+                        color = ColorPalette.NeutralDarkGrey
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(40.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(32.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        // Email
+                        LabeledTextField(
+                            label = "Email Address",
+                            value = email,
+                            onValueChange = { email = it },
+                            placeholder = "Example: johndoe@gmail.com",
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        )
+
+                        // Password
+                        LabeledPasswordField(
+                            label = "Password",
+                            value = password,
+                            onValueChange = { password = it },
+                            visible = showPassword,
+                            onToggleVisibility = { showPassword = !showPassword },
+                            imeAction = ImeAction.Done
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        // Login Button
+                        Button(
+                            onClick = { onLoginClick(email, password) },
+                            shape = RoundedCornerShape(100.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = ColorPalette.PrimaryBase,
+                                contentColor = ColorPalette.NeutralWhite
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Login", style = TextStyles.textBaseMedium, color = ColorPalette.NeutralWhite)
+                                Icon(
+                                    imageVector = Heroicons.Solid.ArrowRight,
+                                    contentDescription = null,
+                                    tint = ColorPalette.NeutralWhite,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+
+                        // Divider
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Divider(modifier = Modifier.weight(1f), color = ColorPalette.NeutralLightGrey)
+                            Text("  Or  ", color = ColorPalette.NeutralDarkGrey, style = TextStyles.text2XsMedium)
+                            Divider(modifier = Modifier.weight(1f), color = ColorPalette.NeutralLightGrey)
+                        }
+
+                        // Register Button
+                        Button(
+                            onClick = onRegisterClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = ColorPalette.PrimaryBase
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp)
+                        ) {
+                            Text(
+                                text = "Don’t have any account? Register here",
+                                style = TextStyles.textBaseMedium,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
             }
-        }
-
-        // Divider
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Divider(modifier = Modifier.weight(1f), color = ColorPalette.NeutralLightGrey)
-            Text("  Or  ", color = ColorPalette.NeutralDarkGrey, style = TextStyles.text2XsMedium)
-            Divider(modifier = Modifier.weight(1f), color = ColorPalette.NeutralLightGrey)
-        }
-
-        // Register link
-        Button(
-            onClick = onRegisterClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = ColorPalette.PrimaryBase
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp)
-                .height(54.dp)
-        ) {
-            Text(
-                text = "Don’t have any account? Register here",
-                style = TextStyles.textBaseMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }
+
 
 @Composable
 private fun LabeledTextField(
