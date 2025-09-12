@@ -3,9 +3,9 @@ package ir.sharif.simplenote.feature.settings.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import ir.sharif.simplenote.data.user.UserProfile
-import ir.sharif.simplenote.data.user.UserProfileRepoProvider
-import ir.sharif.simplenote.data.user.UserProfileRepository
+import ir.sharif.simplenote.core.util.UserProfile
+import ir.sharif.simplenote.core.util.UserProfileRepoProvider
+import ir.sharif.simplenote.core.util.UserProfileRepository
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
