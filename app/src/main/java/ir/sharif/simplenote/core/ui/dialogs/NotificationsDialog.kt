@@ -1,16 +1,15 @@
-package ir.sharif.simplenote.ui.features.settings
+package ir.sharif.simplenote.core.ui.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,20 +22,23 @@ import androidx.compose.ui.window.DialogProperties
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.XMark
-import ir.sharif.simplenote.ui.theme.ColorPalette
-import ir.sharif.simplenote.ui.theme.SimpleNoteTheme
-import ir.sharif.simplenote.ui.theme.TextStyles
+import ir.sharif.simplenote.core.designsystem.ColorPalette
+import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
+import ir.sharif.simplenote.core.designsystem.TextStyles
 
+/**
+ * Controlled dialog: all state comes from the caller.
+ */
 @Composable
 fun NotificationsDialog(
-    onDismissRequest: () -> Unit,
-    emailNotificationsEnabled: Boolean,
-    onEmailNotificationsToggled: (Boolean) -> Unit,
-    pushNotificationsEnabled: Boolean,
-    onPushNotificationsToggled: (Boolean) -> Unit
+    onDismiss: () -> Unit,
+    emailEnabled: Boolean,
+    onEmailToggled: (Boolean) -> Unit,
+    pushEnabled: Boolean,
+    onPushToggled: (Boolean) -> Unit
 ) {
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismiss,
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
@@ -47,21 +49,20 @@ fun NotificationsDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Transparent)
-                .clickable(onClick = onDismissRequest),
+                .clickable(onClick = onDismiss),
             contentAlignment = Alignment.BottomCenter
         ) {
             Surface(
-                shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp),
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 color = ColorPalette.NeutralWhite,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(top = 24.dp)
-                    .clickable(onClick = { /* Do nothing */ })
+                    .clickable(onClick = { /* consume */ })
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+
+                    // Close button row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +73,7 @@ fun NotificationsDialog(
                                 .size(32.dp)
                                 .clip(CircleShape)
                                 .background(ColorPalette.NeutralLightGrey)
-                                .clickable(onClick = onDismissRequest),
+                                .clickable(onClick = onDismiss),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -83,19 +84,24 @@ fun NotificationsDialog(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Spacer(Modifier.height(24.dp))
+
                     NotificationToggle(
                         label = "Email Notifications",
-                        isChecked = emailNotificationsEnabled,
-                        onCheckedChange = onEmailNotificationsToggled
+                        isChecked = emailEnabled,
+                        onCheckedChange = onEmailToggled
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(Modifier.height(16.dp))
+
                     NotificationToggle(
                         label = "Push Notifications",
-                        isChecked = pushNotificationsEnabled,
-                        onCheckedChange = onPushNotificationsToggled
+                        isChecked = pushEnabled,
+                        onCheckedChange = onPushToggled
                     )
-                    Spacer(modifier = Modifier.height(25.dp))
+
+                    Spacer(Modifier.height(25.dp))
                 }
             }
         }
@@ -103,7 +109,7 @@ fun NotificationsDialog(
 }
 
 @Composable
-fun NotificationToggle(
+private fun NotificationToggle(
     label: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit
@@ -111,15 +117,11 @@ fun NotificationToggle(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp), // Set a fixed height for better spacing
+            .height(50.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = label,
-            style = TextStyles.textBase,
-            color = ColorPalette.NeutralBlack
-        )
+        Text(text = label, style = TextStyles.textBase, color = ColorPalette.NeutralBlack)
         Switch(
             checked = isChecked,
             onCheckedChange = onCheckedChange,
@@ -135,14 +137,14 @@ fun NotificationToggle(
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationsDialogPreview() {
+private fun NotificationsDialogPreview() {
     SimpleNoteTheme {
         NotificationsDialog(
-            onDismissRequest = {},
-            emailNotificationsEnabled = true,
-            onEmailNotificationsToggled = {},
-            pushNotificationsEnabled = false,
-            onPushNotificationsToggled = {}
+            onDismiss = {},
+            emailEnabled = true,
+            onEmailToggled = {},
+            pushEnabled = false,
+            onPushToggled = {}
         )
     }
 }

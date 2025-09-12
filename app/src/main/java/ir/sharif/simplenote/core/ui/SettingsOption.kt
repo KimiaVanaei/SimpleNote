@@ -1,10 +1,9 @@
-package ir.sharif.simplenote.ui.features.settings
+package ir.sharif.simplenote.core.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -16,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ir.sharif.simplenote.ui.theme.TextStyles
-import ir.sharif.simplenote.ui.theme.ColorPalette
+import ir.sharif.simplenote.core.designsystem.TextStyles
+import ir.sharif.simplenote.core.designsystem.ColorPalette
 
 @Composable
 fun CustomIcon(
@@ -48,7 +47,7 @@ fun SettingsOption(
     modifier: Modifier = Modifier,
     icon: Any, // <-- now supports both Int and ImageVector
     label: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     labelColor: Color = ColorPalette.NeutralBlack,
     iconTint: Color = ColorPalette.NeutralBlack,
     rightContent: @Composable (() -> Unit) = {}
@@ -56,11 +55,12 @@ fun SettingsOption(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp),
+            .then(
+                if (onClick != null) Modifier.clickable { onClick() } else Modifier
+            )
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CustomIcon(
             icon = icon,

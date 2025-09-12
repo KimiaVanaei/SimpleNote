@@ -1,4 +1,4 @@
-package ir.sharif.simplenote.ui.theme
+package ir.sharif.simplenote.core.designsystem
 
 import androidx.compose.ui.graphics.Color
 
