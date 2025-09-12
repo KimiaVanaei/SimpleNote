@@ -2,17 +2,18 @@ package ir.sharif.simplenote.feature.auth.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import com.woowla.compose.icon.collections.heroicons.Heroicons
+import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,22 +24,23 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
-import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
 import ir.sharif.simplenote.core.designsystem.ColorPalette
 import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
+import ir.sharif.simplenote.feature.auth.presentation.LoginUiState
+import ir.sharif.simplenote.feature.auth.presentation.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginClick: (String, String) -> Unit,
     onRegisterClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = viewModel()
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var showPassword by rememberSaveable { mutableStateOf(false) }
+    val state: LoginUiState = viewModel.uiState
 
     Scaffold(
         containerColor = ColorPalette.NeutralWhite
@@ -58,40 +60,29 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    Text(
-                        text = "Let's Login",
-                        style = TextStyles.text2XlBold,
-                        color = ColorPalette.NeutralBlack
-                    )
-                    Text(
-                        text = "And notes your idea",
-                        style = TextStyles.textBase,
-                        color = ColorPalette.NeutralDarkGrey
-                    )
+                    Text("Let's Login", style = TextStyles.text2XlBold, color = ColorPalette.NeutralBlack)
+                    Text("And notes your idea", style = TextStyles.textBase, color = ColorPalette.NeutralDarkGrey)
                 }
 
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(40.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(32.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
                         // Email
                         LabeledTextField(
                             label = "Email Address",
-                            value = email,
-                            onValueChange = { email = it },
+                            value = state.email,
+                            onValueChange = { viewModel.onEmailChange(it) },
                             placeholder = "Example: johndoe@gmail.com",
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
@@ -100,23 +91,22 @@ fun LoginScreen(
                         // Password
                         LabeledPasswordField(
                             label = "Password",
-                            value = password,
-                            onValueChange = { password = it },
-                            visible = showPassword,
-                            onToggleVisibility = { showPassword = !showPassword },
+                            value = state.password,
+                            onValueChange = { viewModel.onPasswordChange(it) },
+                            visible = state.showPassword,
+                            onToggleVisibility = { viewModel.togglePasswordVisibility() },
                             imeAction = ImeAction.Done
                         )
                     }
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
                         // Login Button
                         Button(
-                            onClick = { onLoginClick(email, password) },
+                            onClick = { onLoginClick(state.email, state.password) },
                             shape = RoundedCornerShape(100.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = ColorPalette.PrimaryBase,
@@ -181,7 +171,6 @@ fun LoginScreen(
     }
 }
 
-
 @Composable
 private fun LabeledTextField(
     label: String,
@@ -199,10 +188,7 @@ private fun LabeledTextField(
             onValueChange = onValueChange,
             textStyle = TextStyles.textBase,
             placeholder = { Text(placeholder, color = ColorPalette.NeutralBaseGrey) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType,
-                imeAction = imeAction
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
             keyboardActions = KeyboardActions(onDone = { onImeDone() }),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = ColorPalette.NeutralWhite,
@@ -214,11 +200,7 @@ private fun LabeledTextField(
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = ColorPalette.NeutralBaseGrey,
-                    shape = RoundedCornerShape(12.dp)
-                )
+                .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
         )
     }
 }
@@ -242,19 +224,13 @@ private fun LabeledPasswordField(
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val icon = if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
+                val desc = if (visible) "Hide password" else "Show password"
                 IconButton(onClick = onToggleVisibility) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = if (visible) "Hide password" else "Show password",
-                        tint = ColorPalette.NeutralDarkGrey
-                    )
+                    Icon(imageVector = icon, contentDescription = desc, tint = ColorPalette.NeutralDarkGrey)
                 }
             },
             placeholder = { Text("*********", color = ColorPalette.NeutralBaseGrey) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = imeAction
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction),
             keyboardActions = KeyboardActions(onDone = { onImeDone() }),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = ColorPalette.NeutralWhite,
@@ -266,15 +242,10 @@ private fun LabeledPasswordField(
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = ColorPalette.NeutralBaseGrey,
-                    shape = RoundedCornerShape(12.dp)
-                )
+                .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
