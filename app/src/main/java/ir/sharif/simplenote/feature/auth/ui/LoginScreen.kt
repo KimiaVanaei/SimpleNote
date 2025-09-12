@@ -2,15 +2,11 @@ package ir.sharif.simplenote.feature.auth.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import com.woowla.compose.icon.collections.heroicons.Heroicons
-import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Check
-import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronLeft
-import com.woowla.compose.icon.collections.heroicons.heroicons.outline.PencilSquare
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
