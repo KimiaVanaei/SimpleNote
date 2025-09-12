@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,21 +31,43 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ChevronLeft
 
+// ---------------- UI STATE ----------------
+data class RegisterUiState(
+    val firstName: String = "",
+    val lastName: String = "",
+    val username: String = "",
+    val email: String = "",
+    val password: String = "",
+    val retypePassword: String = "",
+    val showPassword: Boolean = false,
+    val showRetype: Boolean = false
+)
+
+// ---------------- VIEWMODEL ----------------
+class RegisterViewModel : androidx.lifecycle.ViewModel() {
+    var uiState by mutableStateOf(RegisterUiState())
+        private set
+
+    fun onFirstNameChange(value: String) { uiState = uiState.copy(firstName = value) }
+    fun onLastNameChange(value: String) { uiState = uiState.copy(lastName = value) }
+    fun onUsernameChange(value: String) { uiState = uiState.copy(username = value) }
+    fun onEmailChange(value: String) { uiState = uiState.copy(email = value) }
+    fun onPasswordChange(value: String) { uiState = uiState.copy(password = value) }
+    fun onRetypePasswordChange(value: String) { uiState = uiState.copy(retypePassword = value) }
+    fun togglePasswordVisibility() { uiState = uiState.copy(showPassword = !uiState.showPassword) }
+    fun toggleRetypeVisibility() { uiState = uiState.copy(showRetype = !uiState.showRetype) }
+}
+
+// ---------------- SCREEN ----------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     onRegisterClick: (String, String, String, String, String) -> Unit,
     onBackToLoginClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: RegisterViewModel = viewModel()
 ) {
-    var firstName by rememberSaveable { mutableStateOf("") }
-    var lastName by rememberSaveable { mutableStateOf("") }
-    var username by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var retypePassword by rememberSaveable { mutableStateOf("") }
-    var showPassword by rememberSaveable { mutableStateOf(false) }
-    var showRetype by rememberSaveable { mutableStateOf(false) }
+    val state = viewModel.uiState
 
     Scaffold(
         topBar = {
@@ -109,8 +131,8 @@ fun RegisterScreen(
                     ) {
                         LabeledTextField(
                             label = "First Name",
-                            value = firstName,
-                            onValueChange = { firstName = it },
+                            value = state.firstName,
+                            onValueChange = viewModel::onFirstNameChange,
                             placeholder = "Example: Taha",
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -118,8 +140,8 @@ fun RegisterScreen(
 
                         LabeledTextField(
                             label = "Last Name",
-                            value = lastName,
-                            onValueChange = { lastName = it },
+                            value = state.lastName,
+                            onValueChange = viewModel::onLastNameChange,
                             placeholder = "Example: Hamifar",
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -127,8 +149,8 @@ fun RegisterScreen(
 
                         LabeledTextField(
                             label = "Username",
-                            value = username,
-                            onValueChange = { username = it },
+                            value = state.username,
+                            onValueChange = viewModel::onUsernameChange,
                             placeholder = "Example: @HamifarTaha",
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -136,8 +158,8 @@ fun RegisterScreen(
 
                         LabeledTextField(
                             label = "Email Address",
-                            value = email,
-                            onValueChange = { email = it },
+                            value = state.email,
+                            onValueChange = viewModel::onEmailChange,
                             placeholder = "Example: hamifar.taha@gmail.com",
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
@@ -145,19 +167,19 @@ fun RegisterScreen(
 
                         LabeledPasswordField(
                             label = "Password",
-                            value = password,
-                            onValueChange = { password = it },
-                            visible = showPassword,
-                            onToggleVisibility = { showPassword = !showPassword },
+                            value = state.password,
+                            onValueChange = viewModel::onPasswordChange,
+                            visible = state.showPassword,
+                            onToggleVisibility = viewModel::togglePasswordVisibility,
                             imeAction = ImeAction.Next
                         )
 
                         LabeledPasswordField(
                             label = "Retype Password",
-                            value = retypePassword,
-                            onValueChange = { retypePassword = it },
-                            visible = showRetype,
-                            onToggleVisibility = { showRetype = !showRetype },
+                            value = state.retypePassword,
+                            onValueChange = viewModel::onRetypePasswordChange,
+                            visible = state.showRetype,
+                            onToggleVisibility = viewModel::toggleRetypeVisibility,
                             imeAction = ImeAction.Done
                         )
                     }
@@ -165,7 +187,15 @@ fun RegisterScreen(
 
                 item {
                     Button(
-                        onClick = { onRegisterClick(firstName, lastName, username, email, password) },
+                        onClick = {
+                            onRegisterClick(
+                                state.firstName,
+                                state.lastName,
+                                state.username,
+                                state.email,
+                                state.password
+                            )
+                        },
                         shape = RoundedCornerShape(100.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ColorPalette.PrimaryBase,
@@ -211,7 +241,7 @@ fun RegisterScreen(
     }
 }
 
-
+// ---------------- COMPONENTS ----------------
 @Composable
 private fun LabeledTextField(
     label: String,
