@@ -1,17 +1,10 @@
 package ir.sharif.simplenote.feature.auth.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +22,9 @@ import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
 import ir.sharif.simplenote.feature.auth.presentation.LoginUiState
 import ir.sharif.simplenote.feature.auth.presentation.LoginViewModel
+import ir.sharif.simplenote.core.ui.components.LabeledTextField
+import ir.sharif.simplenote.core.ui.components.LabeledPasswordField
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,82 +162,6 @@ fun LoginScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LabeledTextField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    keyboardType: KeyboardType,
-    imeAction: ImeAction,
-    onImeDone: () -> Unit = {}
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, style = TextStyles.textBaseMedium, color = ColorPalette.NeutralBlack)
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyles.textBase,
-            placeholder = { Text(placeholder, color = ColorPalette.NeutralBaseGrey) },
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-            keyboardActions = KeyboardActions(onDone = { onImeDone() }),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = ColorPalette.NeutralWhite,
-                unfocusedContainerColor = ColorPalette.NeutralWhite,
-                disabledContainerColor = ColorPalette.NeutralWhite,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
-        )
-    }
-}
-
-@Composable
-private fun LabeledPasswordField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    visible: Boolean,
-    onToggleVisibility: () -> Unit,
-    imeAction: ImeAction,
-    onImeDone: () -> Unit = {}
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, style = TextStyles.textBaseBold, color = ColorPalette.NeutralBlack)
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyles.textBase,
-            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val icon = if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
-                val desc = if (visible) "Hide password" else "Show password"
-                IconButton(onClick = onToggleVisibility) {
-                    Icon(imageVector = icon, contentDescription = desc, tint = ColorPalette.NeutralDarkGrey)
-                }
-            },
-            placeholder = { Text("*********", color = ColorPalette.NeutralBaseGrey) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction),
-            keyboardActions = KeyboardActions(onDone = { onImeDone() }),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = ColorPalette.NeutralWhite,
-                unfocusedContainerColor = ColorPalette.NeutralWhite,
-                disabledContainerColor = ColorPalette.NeutralWhite,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, ColorPalette.NeutralBaseGrey, RoundedCornerShape(12.dp))
-        )
     }
 }
 
