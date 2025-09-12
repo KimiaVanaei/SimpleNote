@@ -74,22 +74,22 @@ fun RegisterScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Register", style = TextStyles.text2XlBold, color = ColorPalette.NeutralBlack)
-                Text("And start taking notes", style = TextStyles.textBase, color = ColorPalette.NeutralDarkGrey)
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(40.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp),
                 contentPadding = PaddingValues(bottom = 24.dp)
             ) {
+                item {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Register", style = TextStyles.text2XlBold, color = ColorPalette.NeutralBlack)
+                        Text("And start taking notes", style = TextStyles.textBase, color = ColorPalette.NeutralDarkGrey)
+                    }
+                }
+
                 item {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -153,6 +153,7 @@ fun RegisterScreen(
                 }
 
                 item {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
                             onRegisterClick(
