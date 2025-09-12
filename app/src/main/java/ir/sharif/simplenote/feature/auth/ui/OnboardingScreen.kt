@@ -1,6 +1,5 @@
 package ir.sharif.simplenote.feature.auth.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +28,10 @@ import ir.sharif.simplenote.R
 import ir.sharif.simplenote.core.designsystem.ColorPalette
 import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 
 
 @Composable
@@ -37,6 +39,8 @@ fun OnboardingScreen(
     onGetStartedClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         containerColor = ColorPalette.PrimaryBase
     ) { innerPadding ->
@@ -52,11 +56,13 @@ fun OnboardingScreen(
                     .padding(top = 128.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.illustration),
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(R.raw.onboarding_figure)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(280.dp)
+                    modifier = Modifier.size(280.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

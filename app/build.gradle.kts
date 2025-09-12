@@ -95,7 +95,12 @@ dependencies {
     // Robolectric for faking Android environment
     testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("androidx.room:room-testing:$room_version")
+
     testImplementation("androidx.test:core:1.5.0")
+
+    implementation ("io.coil-kt:coil-compose:2.6.0")
+    implementation ("io.coil-kt:coil-svg:2.6.0")
+
     ksp("androidx.room:room-compiler:$room_version")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
