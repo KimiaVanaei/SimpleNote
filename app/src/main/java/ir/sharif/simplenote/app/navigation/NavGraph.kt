@@ -41,8 +41,11 @@ object Routes {
 fun AppNavHost(
     nav: NavHostController,
     isOnboarded: Boolean = false,   // e.g., from DataStore
-    isLoggedIn: Boolean = false     // e.g., from auth state
+    isLoggedInFlow: Flow<Boolean>   // e.g., from auth state
 ) {
+
+    val isLoggedIn by isLoggedInFlow.collectAsState(initial = false)
+
     val startGraph = when {
         !isOnboarded -> Graph.AUTH
         !isLoggedIn  -> Graph.AUTH
