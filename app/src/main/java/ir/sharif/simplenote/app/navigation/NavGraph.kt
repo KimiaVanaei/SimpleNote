@@ -1,8 +1,13 @@
 package ir.sharif.simplenote.app.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +41,7 @@ object Routes {
     const val CHANGE_PASSWORD= "change_password"
 }
 
+
 /**
  * Pass flags if you want to skip onboarding or auth based on persisted state later.
  * For now defaults show Onboarding first.
@@ -47,12 +53,22 @@ fun AppNavHost(
     isLoggedInFlow: Flow<Boolean>   // e.g., from auth state
 ) {
 
-    val isLoggedIn by isLoggedInFlow.collectAsState(initial = false)
+    //val isLoggedIn by isLoggedInFlow.collectAsState(initial = false)
+    val isLoggedInState = isLoggedInFlow.collectAsState(initial = null)
+
+    if (isLoggedInState.value == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    val isLoggedIn = isLoggedInState.value ?: false
 
     val startGraph = when {
+        isLoggedIn -> Graph.APP
         !isOnboarded -> Graph.AUTH
-        !isLoggedIn  -> Graph.AUTH
-        else         -> Graph.APP
+        else -> Graph.AUTH
     }
 
     NavHost(navController = nav, startDestination = startGraph) {
