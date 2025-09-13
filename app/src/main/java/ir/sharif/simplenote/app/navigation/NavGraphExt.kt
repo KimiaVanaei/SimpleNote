@@ -33,7 +33,7 @@ fun NavGraphBuilder.addOnboardingGraph(nav: NavController) {
         }
         composable(Routes.REGISTER) {
             RegisterScreen(
-                onRegisterClick = { _, _, _, _, _ ->
+                onRegisterClick = { firstName, lastName, username, email, password ->
                     nav.navigate(Graph.APP) {
                         popUpTo(Graph.AUTH) { inclusive = true }
                         launchSingleTop = true
