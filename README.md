@@ -6,24 +6,13 @@
 
 A minimalist note-taking app built with modern Android development tools.
 
-## ✨ Features
-- **Add/Edit/Delete** notes
-- **Search** functionality
-- **Dark/Light** theme support
-- Clean Material 3 UI
+## Team Info
+**Name:** Kimia Vanaei  
+**Student ID:** 401107613
+**Email:** [kimiavanaei83@gmail.com](mailto:kimiavanaei83@gmail.com)
 
-## 🛠️ Tech Stack
-- **100% Kotlin**
-- **UI**: Jetpack Compose
-- **Architecture**: MVVM
-- **Navigation**: Compose Navigation
+---
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Android Studio (Flamingo or newer)
-- Android SDK 24+
-
-### Installation
-```bash
-git clone https://github.com/KimiaVanaei/SimpleNote.git
+**Name:** Amirhossein Alian 
+**Student ID:** 403011018
+**Email:** [alianmail81@gmail.com](mailto:alianmail81@gmail.com)
