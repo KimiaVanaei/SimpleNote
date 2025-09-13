@@ -71,7 +71,7 @@ fun ProfileSection(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .border(1.dp, ColorPalette.NeutralLightGrey, CircleShape)
+                        .border(1.dp, ColorPalette.NeutralBaseGrey, CircleShape)
                 )
             } else {
                 Image(

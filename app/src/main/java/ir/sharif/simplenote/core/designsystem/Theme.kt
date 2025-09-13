@@ -8,100 +8,27 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+// Brand seeds used ONLY when dynamic color isn't available (pre-Android 12)
+private val BrandPrimary = Color(0xFF504EC3) // old PrimaryBase
+private val BrandSecondary = Color(0xFF50D889) // old SecondaryBase/SuccessBase
+private val BrandTertiary = Color(0xFFF0C716) // old WarningBase
+private val BrandError = Color(0xFFCE3A54) // old ErrorBase
 
-private val LightColorScheme = lightColorScheme(
-    primary = ColorPalette.PrimaryBase,
-    onPrimary = ColorPalette.NeutralWhite,
-    primaryContainer = ColorPalette.PrimaryBase,
-    onPrimaryContainer = ColorPalette.PrimaryDark,
-
-    secondary = ColorPalette.SecondaryBase,
-    onSecondary = ColorPalette.NeutralWhite,
-    secondaryContainer = ColorPalette.SecondaryLight,
-    onSecondaryContainer = ColorPalette.SecondaryDark,
-
-    tertiary = ColorPalette.WarningBase,
-    onTertiary = ColorPalette.NeutralBlack,
-    tertiaryContainer = ColorPalette.WarningLight,
-    onTertiaryContainer = ColorPalette.WarningDark,
-
-    error = ColorPalette.ErrorBase,
-    onError = ColorPalette.NeutralWhite,
-    errorContainer = ColorPalette.ErrorLight,
-    onErrorContainer = ColorPalette.ErrorDark,
-
-    background = ColorPalette.NeutralWhite,
-    onBackground = ColorPalette.NeutralBlack,
-
-    surface = ColorPalette.NeutralWhite,
-    onSurface = ColorPalette.NeutralBlack,
-    surfaceVariant = ColorPalette.NeutralLightGrey,
-    onSurfaceVariant = ColorPalette.NeutralDarkGrey,
-
-    outline = ColorPalette.NeutralBaseGrey,
-    outlineVariant = ColorPalette.NeutralLightGrey,
-
-    scrim = ColorPalette.NeutralBlack,
-    inverseSurface = ColorPalette.NeutralBlack,
-    inverseOnSurface = ColorPalette.NeutralWhite,
-    inversePrimary = ColorPalette.PrimaryLight,
-
-    surfaceDim = ColorPalette.NeutralLightGrey,
-    surfaceBright = ColorPalette.NeutralWhite,
-    surfaceContainerLowest = ColorPalette.NeutralWhite,
-    surfaceContainerLow = ColorPalette.PrimaryBackground,
-    surfaceContainer = ColorPalette.NeutralLightGrey,
-    surfaceContainerHigh = ColorPalette.NeutralBaseGrey,
-    surfaceContainerHighest = ColorPalette.NeutralDarkGrey,
+private val LightFallbackColorScheme = lightColorScheme(
+    primary = BrandPrimary,
+    secondary = BrandSecondary,
+    tertiary = BrandTertiary,
+    error = BrandError,
 )
 
-// Dark Theme Color Scheme
-private val DarkColorScheme = darkColorScheme(
-    primary = ColorPalette.PrimaryBase,
-    onPrimary = ColorPalette.PrimaryDark,
-    primaryContainer = ColorPalette.PrimaryBase,
-    onPrimaryContainer = ColorPalette.PrimaryLight,
-
-    secondary = ColorPalette.SecondaryLight,
-    onSecondary = ColorPalette.SecondaryDark,
-    secondaryContainer = ColorPalette.SecondaryDark,
-    onSecondaryContainer = ColorPalette.SecondaryLight,
-
-    tertiary = ColorPalette.WarningLight,
-    onTertiary = ColorPalette.WarningDark,
-    tertiaryContainer = ColorPalette.WarningDark,
-    onTertiaryContainer = ColorPalette.WarningLight,
-
-    error = ColorPalette.ErrorLight,
-    onError = ColorPalette.ErrorDark,
-    errorContainer = ColorPalette.ErrorDark,
-    onErrorContainer = ColorPalette.ErrorLight,
-
-    background = ColorPalette.NeutralBlack,
-    onBackground = ColorPalette.NeutralWhite,
-
-    surface = ColorPalette.NeutralBlack,
-    onSurface = ColorPalette.NeutralWhite,
-    surfaceVariant = ColorPalette.NeutralDarkGrey,
-    onSurfaceVariant = ColorPalette.NeutralLightGrey,
-
-    outline = ColorPalette.NeutralBaseGrey,
-    outlineVariant = ColorPalette.NeutralDarkGrey,
-
-    scrim = ColorPalette.NeutralBlack,
-    inverseSurface = ColorPalette.NeutralWhite,
-    inverseOnSurface = ColorPalette.NeutralBlack,
-    inversePrimary = ColorPalette.PrimaryBase,
-
-    surfaceDim = ColorPalette.NeutralBlack,
-    surfaceBright = ColorPalette.NeutralDarkGrey,
-    surfaceContainerLowest = ColorPalette.NeutralBlack,
-    surfaceContainerLow = ColorPalette.NeutralBlack,
-    surfaceContainer = ColorPalette.NeutralDarkGrey,
-    surfaceContainerHigh = ColorPalette.NeutralDarkGrey,
-    surfaceContainerHighest = ColorPalette.NeutralBaseGrey,
+private val DarkFallbackColorScheme = darkColorScheme(
+    primary = BrandPrimary,
+    secondary = BrandSecondary,
+    tertiary = BrandTertiary,
+    error = BrandError,
 )
 
 @Composable
@@ -110,14 +37,13 @@ fun SimpleNoteTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+    val colorScheme =
+        if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        } else {
+            if (darkTheme) DarkFallbackColorScheme else LightFallbackColorScheme
         }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
 
     MaterialTheme(
         colorScheme = colorScheme,
