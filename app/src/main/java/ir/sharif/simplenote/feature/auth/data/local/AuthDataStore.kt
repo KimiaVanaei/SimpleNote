@@ -21,17 +21,21 @@ class AuthDataStore(private val ds: DataStore<Preferences>) {
     }
 
     suspend fun save(tokens: Tokens) = ds.edit {
+        android.util.Log.d("AuthDS", "Saving tokens: access=${tokens.access.take(20)}..., refresh=${tokens.refresh.take(20)}...")
         it[K_ACCESS] = tokens.access
         it[K_REFRESH] = tokens.refresh
     }
 
-    suspend fun updateAccess(access: String) = ds.edit {
-        it[K_ACCESS] = access
+    suspend fun updateAccess(newAccess: String) = ds.edit {
+        android.util.Log.d("AuthDS", "Updating access token: ${newAccess.take(20)}...")
+        it[K_ACCESS] = newAccess
     }
 
     suspend fun clear() = ds.edit {
+        android.util.Log.d("AuthDS", "Clearing all tokens from DataStore")
         it.remove(K_ACCESS)
         it.remove(K_REFRESH)
+        // it.clear()
     }
 }
 

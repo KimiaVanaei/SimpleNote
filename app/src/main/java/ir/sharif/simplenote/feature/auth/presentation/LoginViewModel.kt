@@ -26,20 +26,20 @@ class LoginViewModel @Inject constructor(
 
     fun login() {
         viewModelScope.launch {
-            Log.d("LoginVM", "login() called with ${uiState.email}")
+            android.util.Log.d("LoginVM", ">>> login() called with username=${uiState.email}, passwordLength=${uiState.password.length}")
             uiState = uiState.copy(isLoading = true, error = null)
             runCatching {
                 repo.login(uiState.email.trim(), uiState.password)
             }.onSuccess {
-                Log.d("LoginVM", "Login success")
+                android.util.Log.d("LoginVM", "<<< Login success, updating UI state")
                 uiState = uiState.copy(isLoading = false, success = true)
             }.onFailure { e ->
-                if (e is HttpException) {
+                if (e is retrofit2.HttpException) {
                     val errorBody = e.response()?.errorBody()?.string()
-                    Log.e("LoginVM", "Login failed with ${e.code()}: $errorBody")
+                    android.util.Log.e("LoginVM", "Login failed with HTTP ${e.code()}: $errorBody")
                     uiState = uiState.copy(isLoading = false, error = errorBody)
                 } else {
-                    Log.e("LoginVM", "Login failed", e)
+                    android.util.Log.e("LoginVM", "Login failed with exception", e)
                     uiState = uiState.copy(isLoading = false, error = e.message)
                 }
             }

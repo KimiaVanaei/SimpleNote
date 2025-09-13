@@ -1,5 +1,6 @@
 package ir.sharif.simplenote.app
 
+import javax.inject.Inject
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,17 +17,15 @@ import ir.sharif.simplenote.feature.auth.data.local.AuthDataStore
 import kotlinx.coroutines.flow.map
 import dagger.hilt.android.AndroidEntryPoint
 
-private val ComponentActivity.dataStore by preferencesDataStore(name = "auth_prefs")
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var authDataStore: AuthDataStore
+    @Inject
+    lateinit var authDataStore: AuthDataStore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        authDataStore = AuthDataStore(dataStore)
 
         setContent {
             SimpleNoteTheme {

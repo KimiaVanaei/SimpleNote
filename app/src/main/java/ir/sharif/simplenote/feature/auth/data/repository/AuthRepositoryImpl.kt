@@ -21,10 +21,17 @@ class AuthRepositoryImpl(
         ds.tokensFlow.map { it != null }
 
     override suspend fun login(username: String, password: String) {
-        android.util.Log.d("AuthRepo", "Sending login: username=$username, password=$password")
+        android.util.Log.d("AuthRepo", ">>> Sending login request")
+        android.util.Log.d("AuthRepo", "Payload = { username=$username , passwordLength=${password.length} }")
+
         val tp = api.login(LoginRequest(username, password))
-        android.util.Log.d("AuthRepo", "Got tokens: access=${tp.access.take(10)}...")
+
+        android.util.Log.d("AuthRepo", "<<< Response received")
+        android.util.Log.d("AuthRepo", "Access token (first 20 chars): ${tp.access.take(20)}...")
+        android.util.Log.d("AuthRepo", "Refresh token (first 20 chars): ${tp.refresh.take(20)}...")
+
         ds.save(Tokens(tp.access, tp.refresh))
+        android.util.Log.d("AuthRepo", "Tokens saved into DataStore")
     }
 
     override suspend fun register(username: String, email: String, password: String) {
