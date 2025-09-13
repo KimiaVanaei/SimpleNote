@@ -34,9 +34,27 @@ class AuthRepositoryImpl(
         android.util.Log.d("AuthRepo", "Tokens saved into DataStore")
     }
 
-    override suspend fun register(username: String, email: String, password: String) {
-        api.register(RegisterRequest(username, email, password))
-        login(username, password)
+    override suspend fun register(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String
+    ): Result<Unit> {
+        return try {
+            api.register(
+                RegisterRequest(
+                    username = username,
+                    email = email,
+                    password = password,
+                    first_name = firstName,
+                    last_name = lastName
+                )
+            )
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun logout() {
