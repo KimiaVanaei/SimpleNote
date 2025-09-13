@@ -75,10 +75,10 @@ fun LoginScreen(
                     ) {
                         // Email
                         LabeledTextField(
-                            label = "Email Address",
+                            label = "Username",
                             value = state.email,
                             onValueChange = { viewModel.onEmailChange(it) },
-                            placeholder = "Example: johndoe@gmail.com",
+                            placeholder = "Example: @HamifarTaha",
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         )

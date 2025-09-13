@@ -15,8 +15,8 @@ import ir.sharif.simplenote.feature.auth.data.remote.AuthApi
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-//    private const val BASE_URL = "http://10.0.2.2:8000/"
-    private const val BASE_URL = "http://10.229.112.153:8000/"
+    private const val BASE_URL = "http://10.0.2.2:8000/"
+    //private const val BASE_URL = "http://10.229.112.153:8000/"
 
 
 
