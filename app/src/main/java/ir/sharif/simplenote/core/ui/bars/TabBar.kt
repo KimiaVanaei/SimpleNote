@@ -1,4 +1,3 @@
-// file: ir/sharif/simplenote/core/ui/bars/TabBar.kt
 package ir.sharif.simplenote.core.ui.bars
 
 import androidx.compose.foundation.background

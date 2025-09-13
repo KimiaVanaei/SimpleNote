@@ -1,5 +1,6 @@
 package ir.sharif.simplenote.feature.note.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +19,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowla.compose.icon.collections.heroicons.Heroicons
@@ -27,7 +27,15 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronLe
 import ir.sharif.simplenote.core.designsystem.ColorPalette
 import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
+import ir.sharif.simplenote.core.ui.bars.TaskBar
 import ir.sharif.simplenote.core.ui.dialogs.DeleteNoteDialog
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+
+private val AppBarHeight = 54.dp     // taller bar → divider sits lower
+private val ExtraTopGap = 4.dp       // extra distance from status bar to content
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,40 +47,64 @@ fun EditNoteScreen(
     onTitleChange: (String) -> Unit,
     onBodyChange: (String) -> Unit,
     onConfirmDelete: () -> Unit,
+    onAutoSave: () -> Unit,
 ) {
     var showDelete by rememberSaveable { mutableStateOf(false) }
+
+    // System back → delegate to VM (which will save-or-delete)
+    BackHandler { onNavigateBack() }
+
+    // 🚀 Auto-save while typing (debounced)
+    LaunchedEffect(title, body) {
+        snapshotFlow { title to body }
+            .debounce(600)                    // wait for typing to pause
+            .distinctUntilChanged()           // only when text actually changed
+            .map { (t, b) -> t.isNotBlank() || b.isNotBlank() }
+            .filter { it }                    // avoid saving fully empty note repeatedly
+            .collect { onAutoSave() }
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    Box(
                         modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickable(onClick = onNavigateBack)
+                            .fillMaxHeight()
+                            .padding(start = 12.dp)
+                            .clickable(onClick = onNavigateBack),
+                        contentAlignment = Alignment.CenterStart
                     ) {
-                        Icon(
-                            imageVector = Heroicons.Outline.ChevronLeft,
-                            contentDescription = "Back",
-                            tint = ColorPalette.PrimaryBase,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = TextStyles.textBaseMedium,
-                            color = ColorPalette.PrimaryBase
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Heroicons.Outline.ChevronLeft,
+                                contentDescription = "Back",
+                                tint = ColorPalette.PrimaryBase,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = "Back",
+                                style = TextStyles.textBaseMedium,
+                                color = ColorPalette.PrimaryBase
+                            )
+                        }
                     }
                 },
+                // no actions → no explicit Save button (auto-save enabled)
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ColorPalette.NeutralWhite,
                     titleContentColor = ColorPalette.NeutralBlack
                 ),
+                // Control insets + height + top gap to move content away from status bar
+                windowInsets = WindowInsets(0, 0, 0, 0),
                 modifier = Modifier
-                    .height(60.dp)
+                    .statusBarsPadding()
+                    .height(AppBarHeight)
+                    .padding(top = ExtraTopGap)
                     .background(ColorPalette.NeutralWhite)
             )
         }
@@ -85,7 +117,7 @@ fun EditNoteScreen(
         ) {
             Column(Modifier.fillMaxSize()) {
 
-                // Thin divider under the top bar
+                // Divider under top bar
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -104,7 +136,7 @@ fun EditNoteScreen(
                     // Title
                     TextField(
                         value = title,
-                        onValueChange = onTitleChange,
+                        onValueChange = onTitleChange,    // triggers auto-save pipeline
                         placeholder = {
                             Text(
                                 "Title",
@@ -130,7 +162,7 @@ fun EditNoteScreen(
                     // Body
                     TextField(
                         value = body,
-                        onValueChange = onBodyChange,
+                        onValueChange = onBodyChange,     // triggers auto-save pipeline
                         placeholder = {
                             Text(
                                 "Feel Free to Write Here…",
@@ -149,13 +181,13 @@ fun EditNoteScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .defaultMinSize(minHeight = 200.dp) // airy feel
+                            .defaultMinSize(minHeight = 200.dp)
                     )
                 }
 
-                // Bottom task bar
+                // Bottom task bar (trash opens dialog)
                 Column {
-                    // Thin divider line
+                    // Divider
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -171,6 +203,7 @@ fun EditNoteScreen(
                 }
             }
 
+            // Confirm delete dialog
             if (showDelete) {
                 DeleteNoteDialog(
                     onDismiss = { showDelete = false },
@@ -200,7 +233,8 @@ private fun EditNoteScreenPreview() {
             onNavigateBack = {},
             onTitleChange = { title = it },
             onBodyChange = { body = it },
-            onConfirmDelete = {}
+            onConfirmDelete = {},
+            onAutoSave = {}
         )
     }
 }

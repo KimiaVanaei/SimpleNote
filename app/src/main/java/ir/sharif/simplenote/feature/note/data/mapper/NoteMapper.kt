@@ -9,7 +9,6 @@ fun NoteEntity.toDomain(): Note {
         id = id,
         title = title,
         content = content,
-        color = color,
         lastEdited = lastEdited,
         isSynced = isSynced
     )
@@ -21,7 +20,6 @@ fun Note.toEntity(): NoteEntity {
         id = id,
         title = title,
         content = content,
-        color = color,
         lastEdited = lastEdited,
         isSynced = isSynced
     )

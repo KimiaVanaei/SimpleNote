@@ -1,5 +1,4 @@
-// file: ir.sharif.simplenote.feature.note.ui.TaskBar.kt
-package ir.sharif.simplenote.feature.note.ui
+package ir.sharif.simplenote.core.ui.bars
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowla.compose.icon.collections.heroicons.Heroicons
@@ -32,34 +32,33 @@ import ir.sharif.simplenote.core.designsystem.ColorPalette
 import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
 
-
 @Composable
 fun SearchBar(
-    query: TextFieldValue,
-    onQueryChange: (TextFieldValue) -> Unit,
-    onIconClick: ()-> Unit,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onIconClick: () -> Unit,
     modifier: Modifier = Modifier,
     placeHolder: String = "Search...",
     icon: ImageVector = Heroicons.Outline.MagnifyingGlass,
     textFieldIcon: ImageVector? = null,
     onTextFieldIconClick: () -> Unit = {}
 ) {
-    Row(modifier.fillMaxWidth().padding(16.dp, 9.dp),
+    Row(
+        modifier.fillMaxWidth().padding(16.dp, 9.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         IconButton(
             modifier = Modifier.size(24.dp),
             onClick = onIconClick,
-            enabled = query.text.isNotEmpty()
+            enabled = query.isNotEmpty()
         ) {
-            Icon(
-                icon,
-                contentDescription = "search icon",
-            )
+            Icon(icon, contentDescription = "search")
         }
 
         Surface(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f).padding(vertical = 20.dp),
             color = ColorPalette.NeutralLightGrey,
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -69,25 +68,14 @@ fun SearchBar(
                 textStyle = TextStyles.textSm.copy(color = ColorPalette.NeutralBlack),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 singleLine = true,
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        onIconClick()
-                    },
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Search,
-                ),
-
+                keyboardActions = KeyboardActions(onSearch = { onIconClick() }),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                 decorationBox = { innerTextField ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            if (query.text.isEmpty()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.weight(1f)) {
+                            if (query.isEmpty()) {
                                 Text(
                                     text = placeHolder,
                                     style = TextStyles.textSm.copy(color = ColorPalette.NeutralBaseGrey),
@@ -95,16 +83,14 @@ fun SearchBar(
                             }
                             innerTextField()
                         }
-                        if (query.text.isNotEmpty() && textFieldIcon != null) {
+                        if (query.isNotEmpty() && textFieldIcon != null) {
                             IconButton(
                                 modifier = Modifier.size(24.dp),
-                                onClick = onTextFieldIconClick
-                            ) {
-                                Icon(
-                                    imageVector = textFieldIcon,
-                                    contentDescription = "Clear Text Icon"
-                                )
-                            }
+                                onClick = {
+                                    onTextFieldIconClick()
+                                    onQueryChange("")
+                                }
+                            ) { Icon(textFieldIcon, contentDescription = "clear") }
                         }
                     }
                 }
@@ -113,16 +99,16 @@ fun SearchBar(
     }
 }
 
-@Preview()
+@Preview
 @Composable
-fun SearchBarPreview() {
-    var query = remember { mutableStateOf(TextFieldValue()) }
+private fun SearchBarPreview() {
+    val (q, setQ) = remember { mutableStateOf("") }
     SimpleNoteTheme {
         SearchBar(
-            query.value,
-            onQueryChange = {query.value = it},
+            query = q,
+            onQueryChange = setQ,
             onIconClick = {},
-            textFieldIcon = Heroicons.Outline.XMark,
+            textFieldIcon = Heroicons.Outline.XMark
         )
     }
 }

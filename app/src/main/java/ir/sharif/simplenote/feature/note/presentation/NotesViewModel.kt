@@ -4,71 +4,55 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.usecase.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
 
 class NotesViewModel(
-    private val getNotes: GetNotesUseCase,
-    private val addNote: AddNoteUseCase,
+    observeNotes: ObserveNotesUseCase,              // Flow<List<Note>>
+    private val addNote: AddNoteUseCase,           // returns Int
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
-    private val searchNotes: SearchNotesUseCase
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(NotesUiState())
-        private set
+    private val query = MutableStateFlow("")
 
-    fun loadNotes() {
-        viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
-            try {
-                val list = getNotes()
-                uiState = uiState.copy(notes = list, isLoading = false)
-            } catch (e: Exception) {
-                uiState = uiState.copy(error = e.message, isLoading = false)
+    private val notesFlow: Flow<List<Note>> = observeNotes()
+
+    val ui: StateFlow<NotesUiState> =
+        combine(notesFlow, query) { all, q ->
+            val filtered = if (q.isBlank()) all else {
+                all.filter { n ->
+                    n.title.contains(q, ignoreCase = true) ||
+                            n.content.contains(q, ignoreCase = true)
+                }
             }
-        }
-    }
-
-    fun add(title: String, content: String, color: String) {
-        viewModelScope.launch {
-            addNote(
-                Note(
-                    title = title,
-                    content = content,
-                    color = color,
-                    lastEdited = System.currentTimeMillis()
-                )
+            NotesUiState(
+                notes = filtered,
+                query = q,
+                hasAny = all.isNotEmpty()
             )
-            loadNotes()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            NotesUiState()
+        )
+
+    fun onQueryChange(q: String) { query.value = q }
+
+    /** Option B: create in DB and return new id */
+    fun addBlankNote(onCreated: (Int) -> Unit) {
+        val now = System.currentTimeMillis()
+        viewModelScope.launch {
+            val id = addNote(Note(title = "", content = "", lastEdited = now, isSynced = false))
+            onCreated(id)
         }
     }
 
-    fun update(note: Note) {
-        viewModelScope.launch {
-            updateNote(note.copy(lastEdited = System.currentTimeMillis()))
-            loadNotes()
-        }
-    }
+    // optional helpers if you edit from cards, etc.
+    fun update(note: Note) = viewModelScope.launch { updateNote(note) }
+    fun delete(note: Note) = viewModelScope.launch { deleteNote(note) }
 
-    fun delete(note: Note) {
-        viewModelScope.launch {
-            deleteNote(note)
-            loadNotes()
-        }
-    }
-
-    fun search(query: String) {
-        viewModelScope.launch {
-            try {
-                val result = searchNotes(query)
-                uiState = uiState.copy(notes = result)
-            } catch (e: Exception) {
-                uiState = uiState.copy(error = e.message)
-            }
-        }
-    }
+    /** Optional one-time cleanup of orphan blanks (call in Home once) */
+    fun pruneEmptyNotes() = viewModelScope.launch {}
 }
-
