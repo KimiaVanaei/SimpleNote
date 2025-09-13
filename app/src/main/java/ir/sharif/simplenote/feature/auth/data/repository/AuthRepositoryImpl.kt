@@ -5,10 +5,12 @@ import ir.sharif.simplenote.feature.auth.data.local.Tokens
 import ir.sharif.simplenote.feature.auth.data.remote.AuthApi
 import ir.sharif.simplenote.feature.auth.data.remote.LoginRequest
 import ir.sharif.simplenote.feature.auth.data.remote.RegisterRequest
+import ir.sharif.simplenote.feature.auth.data.remote.RefreshRequest
 import ir.sharif.simplenote.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+
 
 class AuthRepositoryImpl(
     private val api: AuthApi,
@@ -29,11 +31,16 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun logout() {
-        runCatching { api.logout() }
         ds.clear()
     }
 
     override suspend fun getAccessOrNull(): String? {
         return ds.tokensFlow.firstOrNull()?.access
+    }
+
+    suspend fun refreshToken() {
+        val refresh = ds.tokensFlow.firstOrNull()?.refresh ?: return
+        val newAccess = api.refresh(RefreshRequest(refresh))
+        ds.updateAccess(newAccess.access)
     }
 }
