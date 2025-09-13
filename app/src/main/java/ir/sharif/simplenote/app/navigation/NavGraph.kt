@@ -1,6 +1,8 @@
 package ir.sharif.simplenote.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +14,7 @@ import ir.sharif.simplenote.feature.home.ui.HomeScreen
 import ir.sharif.simplenote.feature.settings.ui.ChangePasswordScreen
 import ir.sharif.simplenote.feature.settings.ui.EditProfileScreen
 import ir.sharif.simplenote.feature.settings.ui.SettingsScreen
+import kotlinx.coroutines.flow.Flow
 
 /** Route containers (graphs) */
 private object Graph {
