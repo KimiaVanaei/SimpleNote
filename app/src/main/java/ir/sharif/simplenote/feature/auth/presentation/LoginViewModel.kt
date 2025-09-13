@@ -6,9 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ir.sharif.simplenote.feature.auth.domain.repository.AuthRepository
+import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val repo: AuthRepository
 ) : ViewModel() {
 
@@ -23,7 +26,7 @@ class LoginViewModel(
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, error = null)
             runCatching {
-                repo.login(uiState.email, uiState.password)
+                repo.login(uiState.email.trim(), uiState.password)
             }.onSuccess {
                 uiState = uiState.copy(isLoading = false, success = true)
             }.onFailure { e ->
