@@ -43,6 +43,10 @@ class RegisterViewModel @Inject constructor(
         _uiState.update { it.copy(showRetype = !it.showRetype) }
     }
 
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
+    }
+
     fun register() {
         viewModelScope.launch {
             try {

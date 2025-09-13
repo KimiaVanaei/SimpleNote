@@ -219,6 +219,22 @@ fun RegisterScreen(
             )
         }
 
+        if (state.error != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.clearError()
+                },
+                title = { Text("Status") },
+                text = { Text(state.error ?: "Unknown Error") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.clearError()
+                    }) {
+                        Text("Ok")
+                    }
+                }
+            )
+        }
     }
 }
 
