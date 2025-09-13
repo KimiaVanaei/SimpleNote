@@ -15,15 +15,12 @@ data class UserDto(val id: Long, val username: String, val email: String?)
 
 // Retrofit Interface
 interface AuthApi {
-    @POST("api/auth/login/")
+    @POST("api/auth/token/")
     suspend fun login(@Body body: LoginRequest): TokenPairDto
 
     @POST("api/auth/register/")
     suspend fun register(@Body body: RegisterRequest): UserDto
 
-    @POST("api/auth/refresh/")
+    @POST("api/auth/token/refresh/")
     suspend fun refresh(@Body body: RefreshRequest): AccessDto
-
-    @POST("api/auth/logout/")
-    suspend fun logout()
 }
