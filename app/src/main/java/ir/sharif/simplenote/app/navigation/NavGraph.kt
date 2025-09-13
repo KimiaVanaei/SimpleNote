@@ -131,9 +131,9 @@ fun AppNavHost(
 
             composable(Routes.SETTINGS) {
                 SettingsScreen(
-                    onBack = { nav.popBackStack() },  // back → HOME (same graph)
+                    onBack = { nav.popBackStack() },
                     onNavigateToEditProfile = { nav.navigate(Routes.EDIT_PROFILE) },
-                    onNavigateToChangePassword = { nav.navigate(Routes.CHANGE_PASSWORD) },
+                    onNavigateToChangePassword = { nav.navigate(Routes.CHANGE_PASSWORD) }
                 )
             }
 
