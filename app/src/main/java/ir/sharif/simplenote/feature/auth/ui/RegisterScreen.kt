@@ -203,6 +203,22 @@ fun RegisterScreen(
                 }
             }
         }
+
+        if (state.success) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text("Status") },
+                text = { Text("User Created") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onBackToLoginClick()
+                    }) {
+                        Text("Ok")
+                    }
+                }
+            )
+        }
+
     }
 }
 
