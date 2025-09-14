@@ -13,17 +13,20 @@ import kotlinx.coroutines.launch
 
 class EditProfileViewModel(application: Application) : AndroidViewModel(application) {
 
-    // 🔗 Same repo instance as SettingsViewModel
     private val repo: UserProfileRepository =
         UserProfileRepoProvider.get(application, viewModelScope)
 
-    // Expose current profile so screen can prefill
     val profile: StateFlow<UserProfile> =
         repo.profile.stateIn(viewModelScope, SharingStarted.Eagerly, repo.profile.value)
 
     fun save(name: String, email: String, onDone: () -> Unit) {
         viewModelScope.launch {
-            repo.update(name.trim(), email.trim())
+            val current = profile.value
+            repo.update(
+                name = name,
+                email = email,
+                username = current.username
+            )
             onDone()
         }
     }

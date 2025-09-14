@@ -2,6 +2,8 @@ package ir.sharif.simplenote.feature.note.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ir.sharif.simplenote.core.util.UserProfileRepository
+import kotlinx.coroutines.flow.first
 import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.usecase.AddNoteUseCase
 import ir.sharif.simplenote.feature.note.domain.usecase.DeleteNoteUseCase
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 data class NoteEditorUiState(
     val id: Int? = null,
     val title: String = "",
@@ -21,8 +24,9 @@ data class NoteEditorUiState(
 )
 
 class NoteEditorViewModel(
+    private val userProfileRepo: UserProfileRepository,
     private val getNote: GetNoteByIdUseCase,
-    private val addNote: AddNoteUseCase,      // returns Int
+    private val addNote: AddNoteUseCase,
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
     initialId: Int?
@@ -40,7 +44,8 @@ class NoteEditorViewModel(
     init {
         if (initialId != null) {
             viewModelScope.launch {
-                getNote(initialId)?.let { n ->
+                val username = userProfileRepo.profile.first().username
+                getNote(initialId, username)?.let { n ->
                     persistedTitle = n.title
                     persistedContent = n.content
                     _ui.update {
@@ -68,12 +73,21 @@ class NoteEditorViewModel(
     /** Save ONLY if there are changes. Calls onDone with the note id when a save actually happened. */
     fun save(onDone: (Int) -> Unit) = viewModelScope.launch {
         val s = _ui.value
-        if (!hasChanges()) return@launch    // ⬅️ nothing to do
+        if (!hasChanges()) return@launch
 
+        val username = userProfileRepo.profile.first().username
         val now = System.currentTimeMillis()
         if (s.isNew) {
+            android.util.Log.d("NoteEditorVM", "Saving note for username=$username")
             val id = addNote(
-                Note(title = s.title, content = s.content, lastEdited = now, isSynced = false)
+                username,
+                Note(
+                    title = s.title,
+                    content = s.content,
+                    lastEdited = now,
+                    isSynced = false,
+                    username = username
+                )
             )
             persistedTitle = s.title
             persistedContent = s.content
@@ -81,7 +95,15 @@ class NoteEditorViewModel(
             onDone(id)
         } else {
             updateNote(
-                Note(id = s.id!!, title = s.title, content = s.content, lastEdited = now, isSynced = false)
+                username,
+                Note(
+                    id = s.id!!,
+                    title = s.title,
+                    content = s.content,
+                    lastEdited = now,
+                    isSynced = false,
+                    username = username
+                )
             )
             persistedTitle = s.title
             persistedContent = s.content
@@ -95,18 +117,40 @@ class NoteEditorViewModel(
         val s = _ui.value
         val isEmpty = s.title.isBlank() && s.content.isBlank()
         if (isEmpty) {
-            s.id?.let { deleteNote(Note(id = it, title = "", content = "", lastEdited = s.lastEdited)) }
+            val username = userProfileRepo.profile.first().username
+            s.id?.let { id ->
+                deleteNote(
+                    username,
+                    Note(
+                        id = id,
+                        title = "",
+                        content = "",
+                        lastEdited = s.lastEdited,
+                        username = username
+                    )
+                )
+            }
             onDone()
         } else if (hasChanges()) {
-            save { onDone() }   // will update lastEdited
+            save { onDone() }
         } else {
-            onDone()            // ⬅️ no change → leave lastEdited untouched
+            onDone()
         }
     }
 
     fun delete(onDone: () -> Unit) = viewModelScope.launch {
+        val username = userProfileRepo.profile.first().username
         _ui.value.id?.let { id ->
-            deleteNote(Note(id = id, title = "", content = "", lastEdited = _ui.value.lastEdited))
+            deleteNote(
+                username,
+                Note(
+                    id = id,
+                    title = "",
+                    content = "",
+                    lastEdited = _ui.value.lastEdited,
+                    username = username
+                )
+            )
         }
         onDone()
     }

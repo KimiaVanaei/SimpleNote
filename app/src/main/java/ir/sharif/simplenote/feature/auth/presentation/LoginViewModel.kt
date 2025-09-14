@@ -10,13 +10,14 @@ import androidx.lifecycle.viewModelScope
 import ir.sharif.simplenote.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ir.sharif.simplenote.core.util.UserProfileRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repo: AuthRepository
+    private val repo: AuthRepository,
+    private val profileRepo: UserProfileRepository
 ) : ViewModel() {
-
     var uiState by mutableStateOf(LoginUiState())
         private set
 
@@ -30,8 +31,13 @@ class LoginViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = true, error = null)
             runCatching {
                 repo.login(uiState.email.trim(), uiState.password)
-            }.onSuccess {
+            }.onSuccess { user ->
                 android.util.Log.d("LoginVM", "<<< Login success, updating UI state")
+                profileRepo.update(
+                    name = "",
+                    email = uiState.email,
+                    username = uiState.email
+                )
                 uiState = uiState.copy(isLoading = false, success = true)
             }.onFailure { e ->
                 if (e is retrofit2.HttpException) {

@@ -14,6 +14,19 @@ import ir.sharif.simplenote.feature.note.domain.usecase.ObserveNotesUseCase
 import ir.sharif.simplenote.feature.note.domain.usecase.UpdateNoteUseCase
 import ir.sharif.simplenote.feature.note.presentation.NoteEditorViewModel
 import ir.sharif.simplenote.feature.note.presentation.NotesViewModel
+import ir.sharif.simplenote.core.util.UserProfileRepoProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+            "ALTER TABLE notes ADD COLUMN username TEXT NOT NULL DEFAULT ''"
+        )
+    }
+}
 
 object NotesGraph {
     @Volatile private var db: AppDatabase? = null
@@ -24,7 +37,9 @@ object NotesGraph {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "notes.db"
-            ).build().also { db = it }
+            )
+                .addMigrations(MIGRATION_1_2)
+                .build().also { db = it }
         }
 
     fun repo(context: Context): NotesRepository =
@@ -34,9 +49,12 @@ object NotesGraph {
     fun notesVmFactory(context: Context) = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val repo = repo(context)
+            val userProfileRepo = UserProfileRepoProvider.get(context, CoroutineScope(Dispatchers.IO))
+
             val vm = NotesViewModel(
-                observeNotes = ObserveNotesUseCase(repo),   // ✅ Flow-based source of truth
-                addNote      = AddNoteUseCase(repo),        // returns Int
+                userProfileRepo = userProfileRepo,
+                observeNotes = ObserveNotesUseCase(repo),
+                addNote      = AddNoteUseCase(repo),
                 updateNote   = UpdateNoteUseCase(repo),
                 deleteNote   = DeleteNoteUseCase(repo),
             )
@@ -47,7 +65,10 @@ object NotesGraph {
     fun editorVmFactory(context: Context, noteId: Int?) = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val repo = repo(context)
+            val userProfileRepo = UserProfileRepoProvider.get(context, CoroutineScope(Dispatchers.IO))
+
             val vm = NoteEditorViewModel(
+                userProfileRepo = userProfileRepo,
                 getNote   = GetNoteByIdUseCase(repo),
                 addNote   = AddNoteUseCase(repo),
                 updateNote= UpdateNoteUseCase(repo),

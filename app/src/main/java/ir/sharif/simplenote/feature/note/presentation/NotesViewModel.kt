@@ -2,29 +2,38 @@ package ir.sharif.simplenote.feature.note.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ir.sharif.simplenote.core.util.UserProfileRepository
 import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.usecase.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-
 class NotesViewModel(
-    observeNotes: ObserveNotesUseCase,              // Flow<List<Note>>
-    private val addNote: AddNoteUseCase,           // returns Int
+    private val userProfileRepo: UserProfileRepository,
+    private val observeNotes: ObserveNotesUseCase,
+    private val addNote: AddNoteUseCase,
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
 
-    private val notesFlow: Flow<List<Note>> = observeNotes()
+    private val usernameFlow: Flow<String> =
+        userProfileRepo.profile
+            .onEach { android.util.Log.d("NotesVM", "Observing notes for username=${it.username}") }
+            .map { it.username }
+
+    private val notesFlow: Flow<List<Note>> =
+        usernameFlow.flatMapLatest { username ->
+            observeNotes(username)
+        }
 
     val ui: StateFlow<NotesUiState> =
         combine(notesFlow, query) { all, q ->
             val filtered = if (q.isBlank()) all else {
                 all.filter { n ->
                     n.title.contains(q, ignoreCase = true) ||
-                            n.content.contains(q, ignoreCase = true)
+                    n.content.contains(q, ignoreCase = true)
                 }
             }
             NotesUiState(
@@ -44,14 +53,30 @@ class NotesViewModel(
     fun addBlankNote(onCreated: (Int) -> Unit) {
         val now = System.currentTimeMillis()
         viewModelScope.launch {
-            val id = addNote(Note(title = "", content = "", lastEdited = now, isSynced = false))
-            onCreated(id)
+            usernameFlow.firstOrNull()?.let { username ->
+                val id = addNote(username, Note(
+                    title = "",
+                    content = "",
+                    lastEdited = now,
+                    isSynced = false,
+                    username = username
+                ))
+                onCreated(id)
+            }
         }
     }
 
-    // optional helpers if you edit from cards, etc.
-    fun update(note: Note) = viewModelScope.launch { updateNote(note) }
-    fun delete(note: Note) = viewModelScope.launch { deleteNote(note) }
+    fun update(note: Note) = viewModelScope.launch {
+        usernameFlow.firstOrNull()?.let { username ->
+            updateNote(username, note)
+        }
+    }
+
+    fun delete(note: Note) = viewModelScope.launch {
+        usernameFlow.firstOrNull()?.let { username ->
+            deleteNote(username, note)
+        }
+    }
 
     /** Optional one-time cleanup of orphan blanks (call in Home once) */
     fun pruneEmptyNotes() = viewModelScope.launch {}

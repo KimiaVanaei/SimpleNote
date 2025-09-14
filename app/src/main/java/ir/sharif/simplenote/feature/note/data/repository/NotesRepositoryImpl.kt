@@ -8,30 +8,31 @@ import ir.sharif.simplenote.feature.note.domain.repository.NotesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+
 class NotesRepositoryImpl(
     private val dao: NoteDao
 ) : NotesRepository {
 
-    override fun observeNotes(): Flow<List<Note>> =
-        dao.observeAll().map { it.map { e -> e.toDomain() } }
+    override fun observeNotes(username: String): Flow<List<Note>> =
+        dao.observeAll(username).map { list -> list.map { it.toDomain() } }
 
-    override suspend fun getNotes(): List<Note> =
-        dao.getAllNotes().map { it.toDomain() }
+    override suspend fun getNotes(username: String): List<Note> =
+        dao.getAllNotes(username).map { it.toDomain() }
 
-    override suspend fun getNoteById(id: Int): Note? =
-        dao.getById(id)?.toDomain()
+    override suspend fun getNoteById(id: Int, username: String): Note? =
+        dao.getById(id, username)?.toDomain()
 
-    override suspend fun addNote(note: Note): Int =
-        dao.insert(note.toEntity()).toInt()
+    override suspend fun addNote(username: String, note: Note): Int =
+        dao.insert(note.toEntity(username)).toInt()
 
-    override suspend fun updateNote(note: Note) {
-        dao.update(note.toEntity())
+    override suspend fun updateNote(username: String, note: Note) {
+        dao.update(note.toEntity(username))
     }
 
-    override suspend fun deleteNote(note: Note) {
-        dao.delete(note.toEntity())
+    override suspend fun deleteNote(username: String, note: Note) {
+        dao.delete(note.toEntity(username))
     }
 
-    override suspend fun searchNotes(query: String): List<Note> =
-        dao.searchNotes(query).map { it.toDomain() }
+    override suspend fun searchNotes(username: String, query: String): List<Note> =
+        dao.searchNotes(query, username).map { it.toDomain() }
 }

@@ -16,7 +16,7 @@ private val Context.userProfileDataStore by preferencesDataStore(name = "user_pr
 
 interface UserProfileRepository {
     val profile: StateFlow<UserProfile>
-    suspend fun update(name: String, email: String)
+    suspend fun update(name: String, email: String, username: String)
     suspend fun updateAvatar(uri: String?)
 }
 
@@ -29,6 +29,7 @@ class HybridUserProfileRepository(
     private val scope: CoroutineScope
 ) : UserProfileRepository {
 
+    private val KEY_USERNAME = stringPreferencesKey("username")
     private val KEY_NAME = stringPreferencesKey("name")
     private val KEY_EMAIL = stringPreferencesKey("email")
     private val KEY_AVATAR = stringPreferencesKey("avatar")
@@ -42,6 +43,7 @@ class HybridUserProfileRepository(
             context.userProfileDataStore.data
                 .map { prefs ->
                     UserProfile(
+                        username = prefs[KEY_USERNAME] ?: "",
                         name = prefs[KEY_NAME] ?: "",
                         email = prefs[KEY_EMAIL] ?: "",
                         avatarUri = prefs[KEY_AVATAR]
@@ -51,11 +53,12 @@ class HybridUserProfileRepository(
         }
     }
 
-    override suspend fun update(name: String, email: String) {
-        _profile.value = _profile.value.copy(name = name, email = email)
+    override suspend fun update(name: String, email: String, username: String) {
+        _profile.value = _profile.value.copy(name = name, email = email, username = username)
         context.userProfileDataStore.edit { prefs ->
             prefs[KEY_NAME] = name
             prefs[KEY_EMAIL] = email
+            prefs[KEY_USERNAME] = username
         }
     }
 

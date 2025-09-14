@@ -117,11 +117,11 @@ private fun clamp01(v: Float) = max(0f, min(1f, v))
 /* -------------------- Previews (optional) -------------------- */
 
 private fun demoNotes() = listOf(
-    Note(id = 1, title = "Groceries", content = "Eggs, milk, coffee, spinach, olive oil, apples", lastEdited = 0L, isSynced = true),
-    Note(id = 2, title = "Meeting notes", content = "Discuss offline-first sync & Room schema changes.", lastEdited = 0L, isSynced = false),
-    Note(id = 3, title = "Ideas", content = "Animated checklist, swipe to archive, quick capture tile.", lastEdited = 0L, isSynced = true),
-    Note(id = 4, title = "Travel", content = "Paris itinerary: Musée d'Orsay, Canal Saint-Martin, picnic.", lastEdited = 0L, isSynced = false),
-    Note(id = 5, title = "Reading list", content = "Clean Architecture, Kotlin Coroutines, Jetpack Compose.", lastEdited = 0L, isSynced = true),
+    Note(id = 1, username = "demoUser", title = "Groceries", content = "Eggs, milk, coffee, spinach, olive oil, apples", lastEdited = 0L, isSynced = true),
+    Note(id = 2, username = "demoUser", title = "Meeting notes", content = "Discuss offline-first sync & Room schema changes.", lastEdited = 0L, isSynced = false),
+    Note(id = 3, username = "demoUser", title = "Ideas", content = "Animated checklist, swipe to archive, quick capture tile.", lastEdited = 0L, isSynced = true),
+    Note(id = 4, username = "demoUser", title = "Travel", content = "Paris itinerary: Musée d'Orsay, Canal Saint-Martin, picnic.", lastEdited = 0L, isSynced = false),
+    Note(id = 5, username = "demoUser", title = "Reading list", content = "Clean Architecture, Kotlin Coroutines, Jetpack Compose.", lastEdited = 0L, isSynced = true),
 )
 
 @Preview(name = "NoteCard • Light", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)

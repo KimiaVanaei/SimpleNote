@@ -4,6 +4,7 @@ import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.repository.NotesRepository
 
 class GetNotesUseCase(private val repo: NotesRepository) {
-    suspend operator fun invoke(): List<Note> = repo.getNotes()
+    suspend operator fun invoke(username: String): List<Note> {
+        return repo.getNotes(username)
+    }
 }
-
