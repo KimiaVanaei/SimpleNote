@@ -40,7 +40,7 @@ object ColorPalette {
     val PrimaryBackground: Color
         @Composable get() = MaterialTheme.colorScheme.background
 
-    // ---- Success (use tertiary family as "success")
+    // ---- Success
     val SuccessBase: Color
         @Composable get() = MaterialTheme.colorScheme.tertiary
     val SuccessDark: Color
@@ -48,8 +48,7 @@ object ColorPalette {
     val SuccessLight: Color
         @Composable get() = MaterialTheme.colorScheme.tertiaryContainer
 
-    // ---- Warning (mapped to secondary family by default)
-    // If you want a distinct hue from "secondary", consider creating an extended color role later.
+    // ---- Warning
     val WarningBase: Color
         @Composable get() = MaterialTheme.colorScheme.secondary
     val WarningDark: Color

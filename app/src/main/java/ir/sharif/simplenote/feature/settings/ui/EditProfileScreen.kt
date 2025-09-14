@@ -50,7 +50,7 @@ fun EditProfileScreen(
     // CHANGE: get the shared VM and observe the live profile
     val vm: ir.sharif.simplenote.feature.settings.presentation.EditProfileViewModel =
         androidx.lifecycle.viewmodel.compose.viewModel()
-    val profile by vm.profile.collectAsState() // <— live data from repository
+    val profile by vm.profile.collectAsState()
 
     // CHANGE: prefill once from the saved profile
     var initialized by rememberSaveable { mutableStateOf(false) }
@@ -274,7 +274,7 @@ fun EditProfileScreen(
             Button(
                 onClick = {
                     vm.save(fullName, emailAddress) {
-                        onNavigateBack()          // ← single navigation back
+                        onNavigateBack()
                     }
                 },
                 shape = RoundedCornerShape(100.dp),

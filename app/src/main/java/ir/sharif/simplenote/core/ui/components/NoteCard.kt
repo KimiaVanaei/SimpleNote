@@ -40,7 +40,6 @@ fun NoteCard(
 ) {
     val isDark = isSystemInDarkTheme()
 
-    // Unique, stable color per note (based on id + title)
     val bg = remember(note.id, note.title, isDark) {
         generatedNoteColor(id = note.id, title = note.title, isDark = isDark)
     }
@@ -50,7 +49,7 @@ fun NoteCard(
         modifier = modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { onClick() }, // use modifier for broad version support
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = bg,
@@ -113,8 +112,6 @@ private fun hslToColor(h: Float, s: Float, l: Float, a: Float = 1f): Color {
 }
 
 private fun clamp01(v: Float) = max(0f, min(1f, v))
-
-/* -------------------- Previews (optional) -------------------- */
 
 private fun demoNotes() = listOf(
     Note(id = 1, username = "demoUser", title = "Groceries", content = "Eggs, milk, coffee, spinach, olive oil, apples", lastEdited = 0L, isSynced = true),
