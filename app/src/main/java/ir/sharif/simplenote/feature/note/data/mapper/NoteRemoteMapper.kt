@@ -5,11 +5,10 @@ import ir.sharif.simplenote.feature.note.data.remote.NoteDto
 import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.core.util.toTimestamp
 
-
 // Domain -> Remote DTO
 fun Note.toDto(): NoteDto {
     return NoteDto(
-        id = if (id == 0) null else id,
+        id = serverId,
         title = title,
         description = content
     )
@@ -18,7 +17,8 @@ fun Note.toDto(): NoteDto {
 // Remote DTO -> Domain
 fun NoteDto.toDomain(username: String): Note {
     return Note(
-        id = id ?: 0,
+        localId = 0, // Gerenated By Room
+        serverId = id,
         username = username,
         title = title,
         content = description,
@@ -30,7 +30,8 @@ fun NoteDto.toDomain(username: String): Note {
 // Remote DTO -> Entity
 fun NoteDto.toEntity(username: String): NoteEntity {
     return NoteEntity(
-        id = id ?: 0,
+        localId = 0, // autoGenerate in Room
+        serverId = id,
         username = username,
         title = title,
         content = description,

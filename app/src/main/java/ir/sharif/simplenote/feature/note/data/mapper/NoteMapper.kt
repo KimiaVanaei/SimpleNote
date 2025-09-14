@@ -6,7 +6,8 @@ import ir.sharif.simplenote.feature.note.domain.model.Note
 // Entity -> Domain
 fun NoteEntity.toDomain(): Note {
     return Note(
-        id = id,
+        localId = localId,
+        serverId = serverId,
         username = username,
         title = title,
         content = content,
@@ -17,7 +18,8 @@ fun NoteEntity.toDomain(): Note {
 
 fun Note.toEntity(username: String): NoteEntity {
     return NoteEntity(
-        id = id,
+        localId = localId,
+        serverId = serverId,
         username = username,
         title = title,
         content = content,
