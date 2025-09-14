@@ -26,10 +26,10 @@ fun NotesTwoColumnMasonry(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(left, key = { it.id }) { n -> NoteCard(n, onClick = { onNoteClick(n) }) }
+            items(left, key = { it.localId }) { n -> NoteCard(n, onClick = { onNoteClick(n) }) }
         }
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(right, key = { it.id }) { n -> NoteCard(n, onClick = { onNoteClick(n) }) }
+            items(right, key = { it.localId }) { n -> NoteCard(n, onClick = { onNoteClick(n) }) }
         }
     }
 }

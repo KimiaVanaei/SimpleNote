@@ -12,8 +12,9 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE username = :username ORDER BY lastEdited DESC")
     suspend fun getAllNotes(username: String): List<NoteEntity>
 
-    @Query("SELECT * FROM notes WHERE id = :id AND username = :username LIMIT 1")
+    @Query("SELECT * FROM notes WHERE localId = :id AND username = :username LIMIT 1")
     suspend fun getById(id: Int, username: String): NoteEntity?
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: NoteEntity): Long
@@ -33,9 +34,3 @@ interface NoteDao {
     suspend fun insertAll(notes: List<NoteEntity>)
 
 }
-
-
-
-
-
-

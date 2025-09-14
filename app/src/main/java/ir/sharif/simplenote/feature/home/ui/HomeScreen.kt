@@ -58,7 +58,7 @@ fun HomeScreen(
                 if (ui.notes.isNotEmpty()) {
                     NotesTwoColumnMasonry(
                         notes = ui.notes,
-                        onNoteClick = { onOpenNote(it.id) },
+                        onNoteClick = { onOpenNote(it.localId) },
                         modifier = Modifier.weight(1f)
                     )
                 } else {
