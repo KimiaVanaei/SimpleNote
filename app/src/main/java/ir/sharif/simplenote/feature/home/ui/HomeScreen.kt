@@ -18,6 +18,11 @@ import ir.sharif.simplenote.feature.note.presentation.NotesViewModel
 import ir.sharif.simplenote.feature.note.ui.NotesTwoColumnMasonry
 import ir.sharif.simplenote.core.util.authDataStore
 
+// ✅ theme-aware container
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+
 @Composable
 fun HomeScreen(
     onOpenSettings: () -> Unit,
@@ -34,61 +39,69 @@ fun HomeScreen(
         vm.sync()
     }
 
-    Box(Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(Modifier.fillMaxSize()) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 110.dp)
-        ) {
-            if (ui.hasAny) {
-                Spacer(Modifier.height(12.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 110.dp)
+            ) {
+                if (ui.hasAny) {
+                    Spacer(Modifier.height(12.dp))
 
-                SearchBar(
-                    query = ui.query,
-                    onQueryChange = vm::onQueryChange,
-                    onIconClick = { vm.onQueryChange(ui.query) },
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .fillMaxWidth()
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                if (ui.notes.isNotEmpty()) {
-                    NotesTwoColumnMasonry(
-                        notes = ui.notes,
-                        onNoteClick = { onOpenNote(it.id) },
-                        modifier = Modifier.weight(1f)
+                    SearchBar(
+                        query = ui.query,
+                        onQueryChange = vm::onQueryChange,
+                        onIconClick = { vm.onQueryChange(ui.query) },
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .fillMaxWidth()
                     )
-                } else {
-                    // No results for current query → show a small hint instead of StartJourney
-                    Box(
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        androidx.compose.material3.Text(
-                            "No notes match your search",
-                            // style: use your TextStyles if you want
-                        )
-                    }
-                }
-            } else {
-                // True empty state (no notes in DB)
-                StartJourney(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 12.dp),
-                )
-            }
-        }
 
-        TabBar(
-            selected = BottomTab.Home,
-            onHomeClick = onPressHome,
-            onFabClick = { vm.addBlankNote { newId -> onCreateNote(newId) } },
-            onSettingsClick = onOpenSettings,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+                    Spacer(Modifier.height(8.dp))
+
+                    if (ui.notes.isNotEmpty()) {
+                        NotesTwoColumnMasonry(
+                            notes = ui.notes,
+                            onNoteClick = { onOpenNote(it.id) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    } else {
+                        // No results for current query → show a small hint instead of StartJourney
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No notes match your search",
+                                // style: use your TextStyles if you want
+                                color = MaterialTheme.colorScheme.onSurfaceVariant // ✅ theme-aware text
+                            )
+                        }
+                    }
+                } else {
+                    // True empty state (no notes in DB)
+                    StartJourney(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                    )
+                }
+            }
+
+            TabBar(
+                selected = BottomTab.Home,
+                onHomeClick = onPressHome,
+                onFabClick = { vm.addBlankNote { newId -> onCreateNote(newId) } },
+                onSettingsClick = onOpenSettings,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
     }
 }
