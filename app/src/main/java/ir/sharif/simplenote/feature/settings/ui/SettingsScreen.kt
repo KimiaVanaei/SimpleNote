@@ -208,14 +208,3 @@ fun SettingsScreen(
         )
     }
 }
-/*
- // 🔹 React to logout state
-    LaunchedEffect(uiState.isLoggedOut) {
-        if (uiState.isLoggedOut) {
-            navController.navigate("login") {
-                popUpTo("home") { inclusive = true } // تا برنگرده به Home
-                launchSingleTop = true
-            }
-        }
-    }
- */

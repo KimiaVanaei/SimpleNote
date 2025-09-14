@@ -35,13 +35,12 @@ object Routes {
 @Composable
 fun AppNavHost(
     nav: NavHostController,
-    isOnboarded: Boolean = false,   // e.g. از DataStore
-    isLoggedInFlow: Flow<Boolean>   // e.g. از auth state
+    isOnboarded: Boolean = false,
+    isLoggedInFlow: Flow<Boolean>
 ) {
     val isLoggedInState = isLoggedInFlow.collectAsState(initial = null)
 
     if (isLoggedInState.value == null) {
-        // وقتی هنوز auth state آماده نشده → لودر نشون بده
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
@@ -59,20 +58,12 @@ fun AppNavHost(
                 addAppGraph(nav)
             }
         }
-        !isOnboarded -> {
-            NavHost(
-                navController = nav,
-                startDestination = Graph.AUTH
-            ) {
-                addOnboardingGraph(nav)
-            }
-        }
         else -> {
             NavHost(
                 navController = nav,
                 startDestination = Graph.AUTH
             ) {
-                addAuthGraph(nav)
+                addOnboardingGraph(nav)
             }
         }
     }

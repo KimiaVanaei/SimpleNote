@@ -22,55 +22,76 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 
+// ✅ theme-aware container
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+
 @Composable
 fun StartJourney(modifier: Modifier) {
     val context = LocalContext.current
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().padding(top=153.dp, start = 60.dp, end = 60.dp)) {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(R.raw.home_figure)
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = "starting a journey figure",
-            modifier = Modifier
-                .size(240.dp)
-        )
-        Spacer(modifier = Modifier.size(24.dp))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Start Your Journey", style = TextStyles.textXlBold.copy(color= ColorPalette.NeutralBlack))
-
-            Spacer(modifier = Modifier.size(16.dp))
-
-            Text("Every big step start with small step.\n" +
-                    "Notes your first idea and start\n" +
-                    "your journey!",
-                style = TextStyles.textSm.copy(color= ColorPalette.NeutralDarkGrey),
-                textAlign = TextAlign.Center)
-
-        }
-
-    }
-    Box(modifier = modifier.fillMaxSize().padding(bottom = 50.dp),
-        contentAlignment = Alignment.BottomCenter) {
-
-        Box(modifier = Modifier.padding(start = 12.dp)) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(R.raw.curved_arrow)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .build(),
-                contentDescription = "arrow",
+    Surface( // ✅ root uses background, follows system/dynamic theme
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .height(100.dp)
-                    .size(240.dp)
-            )
+                    .fillMaxSize()
+                    .padding(top = 153.dp, start = 60.dp, end = 60.dp)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(R.raw.home_figure)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
+                    contentDescription = "starting a journey figure",
+                    modifier = Modifier
+                        .size(240.dp)
+                )
+                Spacer(modifier = Modifier.size(24.dp))
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "Start Your Journey",
+                        style = TextStyles.textXlBold.copy(color = ColorPalette.NeutralBlack) // ✅ mapped to onSurface
+                    )
+
+                    Spacer(modifier = Modifier.size(16.dp))
+
+                    Text(
+                        "Every big step start with small step.\n" +
+                                "Notes your first idea and start\n" +
+                                "your journey!",
+                        style = TextStyles.textSm.copy(color = ColorPalette.NeutralDarkGrey), // ✅ mapped to onSurfaceVariant
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 50.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Box(modifier = Modifier.padding(start = 12.dp)) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(R.raw.curved_arrow)
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = "arrow",
+                        modifier = Modifier
+                            .height(100.dp)
+                            .size(240.dp)
+                    )
+                }
+            }
         }
     }
 }
