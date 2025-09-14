@@ -30,16 +30,24 @@ class SettingsViewModel @Inject constructor(
     val uiState: StateFlow<SettingsUiState> = _uiState
 
     fun onEvent(e: SettingsEvent) = when (e) {
+        is SettingsEvent.ChangePassword -> {
+            viewModelScope.launch {
+                try {
+                    val result = authRepo.changePassword(e.oldPassword, e.newPassword)
+                    if (result.isSuccess) {
+                        _uiState.update { it.copy(message = "رمز عبور با موفقیت تغییر کرد") }
+                    } else {
+                        _uiState.update { it.copy(message = "تغییر رمز عبور ناموفق بود") }
+                    }
+                } catch (ex: Exception) {
+                    _uiState.update { it.copy(message = "خطا: ${ex.message}") }
+                }
+            }
+        }
+
         // notifications dialog
         SettingsEvent.OnOpenNotificationsDialog ->
             _uiState.update { it.copy(showNotificationsDialog = true) }
-
-        SettingsEvent.ConfirmLogout -> {
-            viewModelScope.launch {
-                authRepo.logout()
-                _uiState.update { it.copy(showLogoutDialog = false, isLoggedOut = true) }
-            }
-        }
 
         SettingsEvent.OnDismissNotificationsDialog ->
             _uiState.update { it.copy(showNotificationsDialog = false) }
@@ -56,6 +64,13 @@ class SettingsViewModel @Inject constructor(
 
         SettingsEvent.OnDismissLogout ->
             _uiState.update { it.copy(showLogoutDialog = false) }
+
+        SettingsEvent.ConfirmLogout -> {
+            viewModelScope.launch {
+                authRepo.logout()
+                _uiState.update { it.copy(isLoggedOut = true, showLogoutDialog = false) }
+            }
+        }
 
         // nav taps – handled by the screen via callbacks
         SettingsEvent.OnClickEditProfile,
