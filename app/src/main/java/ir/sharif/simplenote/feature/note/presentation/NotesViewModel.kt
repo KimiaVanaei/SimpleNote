@@ -14,6 +14,7 @@ class NotesViewModel(
     private val addNote: AddNoteUseCase,
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
+    private val syncNotes: SyncNotesUseCase // Added
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
@@ -49,7 +50,6 @@ class NotesViewModel(
 
     fun onQueryChange(q: String) { query.value = q }
 
-    /** Option B: create in DB and return new id */
     fun addBlankNote(onCreated: (Int) -> Unit) {
         val now = System.currentTimeMillis()
         viewModelScope.launch {
@@ -78,6 +78,11 @@ class NotesViewModel(
         }
     }
 
-    /** Optional one-time cleanup of orphan blanks (call in Home once) */
+    fun sync() = viewModelScope.launch {
+        usernameFlow.firstOrNull()?.let { username ->
+            syncNotes(username)
+        }
+    }
+
     fun pruneEmptyNotes() = viewModelScope.launch {}
 }
