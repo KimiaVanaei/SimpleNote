@@ -5,13 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import ir.sharif.simplenote.feature.note.data.local.AppDatabase
+import ir.sharif.simplenote.feature.note.data.remote.NoteApi
 import ir.sharif.simplenote.feature.note.data.repository.NotesRepositoryImpl
 import ir.sharif.simplenote.feature.note.domain.repository.NotesRepository
-import ir.sharif.simplenote.feature.note.domain.usecase.AddNoteUseCase
-import ir.sharif.simplenote.feature.note.domain.usecase.DeleteNoteUseCase
-import ir.sharif.simplenote.feature.note.domain.usecase.GetNoteByIdUseCase
-import ir.sharif.simplenote.feature.note.domain.usecase.ObserveNotesUseCase
-import ir.sharif.simplenote.feature.note.domain.usecase.UpdateNoteUseCase
+import ir.sharif.simplenote.feature.note.domain.usecase.*
 import ir.sharif.simplenote.feature.note.presentation.NoteEditorViewModel
 import ir.sharif.simplenote.feature.note.presentation.NotesViewModel
 import ir.sharif.simplenote.core.util.UserProfileRepoProvider
@@ -19,6 +16,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
@@ -28,8 +29,10 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
+
 object NotesGraph {
     @Volatile private var db: AppDatabase? = null
+    @Volatile private var api: NoteApi? = null
 
     private fun db(context: Context): AppDatabase =
         db ?: synchronized(this) {
@@ -42,8 +45,21 @@ object NotesGraph {
                 .build().also { db = it }
         }
 
+    private fun api(): NoteApi =
+        api ?: synchronized(this) {
+            api ?: Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8000/")
+                //.baseUrl("https://simple-note.amirsalarsafaei.com/")
+                .client(OkHttpClient.Builder().build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(NoteApi::class.java)
+                .also { api = it }
+        }
+
     fun repo(context: Context): NotesRepository =
-        NotesRepositoryImpl(db(context).noteDao())
+        NotesRepositoryImpl(db(context).noteDao(), api())
+
 
     // -------- ViewModel factories ----------
     fun notesVmFactory(context: Context) = object : ViewModelProvider.Factory {
@@ -57,6 +73,7 @@ object NotesGraph {
                 addNote      = AddNoteUseCase(repo),
                 updateNote   = UpdateNoteUseCase(repo),
                 deleteNote   = DeleteNoteUseCase(repo),
+                syncNotes    = SyncNotesUseCase(repo)
             )
             @Suppress("UNCHECKED_CAST") return vm as T
         }
