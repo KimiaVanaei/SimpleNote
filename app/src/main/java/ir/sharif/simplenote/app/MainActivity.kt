@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var authDataStore: AuthDataStore
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

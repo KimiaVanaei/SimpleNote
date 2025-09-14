@@ -62,6 +62,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
 
+    // Paging
+    implementation ("androidx.paging:paging-runtime-ktx:3.3.2")
+    implementation ("androidx.paging:paging-compose:3.3.2")
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
