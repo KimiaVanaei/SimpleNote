@@ -90,6 +90,7 @@ object NotesGraph {
                 addNote   = AddNoteUseCase(repo),
                 updateNote= UpdateNoteUseCase(repo),
                 deleteNote= DeleteNoteUseCase(repo),
+                syncNotes = SyncNotesUseCase(repo),
                 initialId = noteId
             )
             @Suppress("UNCHECKED_CAST") return vm as T

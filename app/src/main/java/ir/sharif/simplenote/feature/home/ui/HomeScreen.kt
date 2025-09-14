@@ -2,6 +2,7 @@ package ir.sharif.simplenote.feature.home.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,6 +27,11 @@ fun HomeScreen(
     val context = LocalContext.current
     val vm: NotesViewModel = viewModel(factory = NotesGraph.notesVmFactory(context))
     val ui by vm.ui.collectAsState()
+
+    // Sync
+    LaunchedEffect(Unit) {
+        vm.sync()
+    }
 
     Box(Modifier.fillMaxSize()) {
 

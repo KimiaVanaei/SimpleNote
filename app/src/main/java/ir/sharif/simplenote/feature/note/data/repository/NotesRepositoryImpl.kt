@@ -2,7 +2,9 @@ package ir.sharif.simplenote.feature.note.data.repository
 
 import ir.sharif.simplenote.feature.note.data.local.NoteDao
 import ir.sharif.simplenote.feature.note.data.mapper.toDomain
+import ir.sharif.simplenote.feature.note.data.mapper.toDto
 import ir.sharif.simplenote.feature.note.data.mapper.toEntity
+import ir.sharif.simplenote.feature.note.data.remote.NoteApi
 import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.repository.NotesRepository
 import kotlinx.coroutines.flow.Flow

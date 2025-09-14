@@ -28,6 +28,10 @@ interface NoteDao {
         SELECT * FROM notes
         WHERE (title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%') AND username = :username ORDER BY lastEdited DESC""")
     suspend fun searchNotes(query: String, username: String): List<NoteEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(notes: List<NoteEntity>)
+
 }
 
 

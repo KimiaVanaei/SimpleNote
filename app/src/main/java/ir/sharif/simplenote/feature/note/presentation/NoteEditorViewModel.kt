@@ -8,6 +8,7 @@ import ir.sharif.simplenote.feature.note.domain.model.Note
 import ir.sharif.simplenote.feature.note.domain.usecase.AddNoteUseCase
 import ir.sharif.simplenote.feature.note.domain.usecase.DeleteNoteUseCase
 import ir.sharif.simplenote.feature.note.domain.usecase.GetNoteByIdUseCase
+import ir.sharif.simplenote.feature.note.domain.usecase.SyncNotesUseCase
 import ir.sharif.simplenote.feature.note.domain.usecase.UpdateNoteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
