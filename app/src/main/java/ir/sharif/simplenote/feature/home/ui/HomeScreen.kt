@@ -16,6 +16,7 @@ import ir.sharif.simplenote.core.ui.bars.TabBar
 import ir.sharif.simplenote.feature.note.di.NotesGraph
 import ir.sharif.simplenote.feature.note.presentation.NotesViewModel
 import ir.sharif.simplenote.feature.note.ui.NotesTwoColumnMasonry
+import ir.sharif.simplenote.core.util.authDataStore
 
 @Composable
 fun HomeScreen(

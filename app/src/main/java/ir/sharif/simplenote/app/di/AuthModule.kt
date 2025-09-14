@@ -28,8 +28,10 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthDataStore(ds: DataStore<Preferences>): AuthDataStore =
-        AuthDataStore(ds)
+    fun provideAuthDataStore(@ApplicationContext context: Context): AuthDataStore {
+        return AuthDataStore.getInstance(context)
+    }
+
 
     @Provides
     @Singleton

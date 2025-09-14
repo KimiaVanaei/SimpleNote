@@ -12,11 +12,16 @@ import ir.sharif.simplenote.feature.note.domain.usecase.*
 import ir.sharif.simplenote.feature.note.presentation.NoteEditorViewModel
 import ir.sharif.simplenote.feature.note.presentation.NotesViewModel
 import ir.sharif.simplenote.core.util.UserProfileRepoProvider
+import ir.sharif.simplenote.core.util.AuthDataStoreProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import ir.sharif.simplenote.feature.auth.data.local.AuthDataStore
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -45,21 +50,31 @@ object NotesGraph {
                 .build().also { db = it }
         }
 
-    private fun api(): NoteApi =
-        api ?: synchronized(this) {
-            api ?: Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8000/")
-                //.baseUrl("https://simple-note.amirsalarsafaei.com/")
-                .client(OkHttpClient.Builder().build())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(NoteApi::class.java)
-                .also { api = it }
-        }
-
     fun repo(context: Context): NotesRepository =
-        NotesRepositoryImpl(db(context).noteDao(), api())
+        NotesRepositoryImpl(db(context).noteDao(), api(context))
 
+    private fun api(context: Context): NoteApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val token = AuthDataStoreProvider.getAccessToken(context)
+                val newReq = chain.request().newBuilder()
+                if (!token.isNullOrBlank()) {
+                    newReq.header("Authorization", "Bearer $token")
+                }
+                chain.proceed(newReq.build())
+            }
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8000/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NoteApi::class.java)
+    }
 
     // -------- ViewModel factories ----------
     fun notesVmFactory(context: Context) = object : ViewModelProvider.Factory {
