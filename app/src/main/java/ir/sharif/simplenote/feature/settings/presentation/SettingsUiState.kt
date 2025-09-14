@@ -10,5 +10,8 @@ data class SettingsUiState(
     val emailNotificationsEnabled: Boolean = false,
     val pushNotificationsEnabled: Boolean = false,
     val isLoggedOut: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+
+    val changePasswordSuccess: Boolean = false,
+    val changePasswordError: String? = null,
 )

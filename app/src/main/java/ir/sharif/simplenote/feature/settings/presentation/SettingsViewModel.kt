@@ -21,11 +21,9 @@ class SettingsViewModel @Inject constructor(
     private val authRepo: AuthRepository
 ) : ViewModel() {
 
-    // Expose live profile to UI
     val profile: StateFlow<UserProfile> =
         repo.profile.stateIn(viewModelScope, SharingStarted.Eagerly, repo.profile.value)
 
-    // --- your existing UI state (kept intact) ---
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
 
@@ -35,17 +33,38 @@ class SettingsViewModel @Inject constructor(
                 try {
                     val result = authRepo.changePassword(e.oldPassword, e.newPassword)
                     if (result.isSuccess) {
-                        _uiState.update { it.copy(message = "رمز عبور با موفقیت تغییر کرد") }
+                        _uiState.update {
+                            it.copy(
+                                changePasswordSuccess = true,
+                                changePasswordError = null,
+                                message = "Password Changed Successfully"
+                            )
+                        }
                     } else {
-                        _uiState.update { it.copy(message = "تغییر رمز عبور ناموفق بود") }
+                        _uiState.update {
+                            it.copy(
+                                changePasswordSuccess = false,
+                                changePasswordError = "Failed To Change Password",
+                                message = "Failed To Change Password"
+                            )
+                        }
                     }
                 } catch (ex: Exception) {
-                    _uiState.update { it.copy(message = "خطا: ${ex.message}") }
+                    _uiState.update {
+                        it.copy(
+                            changePasswordSuccess = false,
+                            changePasswordError = ex.message,
+                            message = "خطا: ${ex.message}"
+                        )
+                    }
                 }
             }
         }
 
-        // notifications dialog
+        SettingsEvent.DismissChangePasswordError -> {
+            _uiState.update { it.copy(changePasswordError = null) }
+        }
+
         SettingsEvent.OnOpenNotificationsDialog ->
             _uiState.update { it.copy(showNotificationsDialog = true) }
 
@@ -58,7 +77,6 @@ class SettingsViewModel @Inject constructor(
         is SettingsEvent.OnPushNotificationsToggled ->
             _uiState.update { it.copy(pushNotificationsEnabled = e.enabled) }
 
-        // logout
         SettingsEvent.OnClickLogout ->
             _uiState.update { it.copy(showLogoutDialog = true) }
 
@@ -72,7 +90,6 @@ class SettingsViewModel @Inject constructor(
             }
         }
 
-        // nav taps – handled by the screen via callbacks
         SettingsEvent.OnClickEditProfile,
         SettingsEvent.OnClickChangePassword -> Unit
 
