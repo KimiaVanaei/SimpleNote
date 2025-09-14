@@ -15,9 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-
 data class NoteEditorUiState(
-    val id: Int? = null,
+    val localId: Int? = null,
+    val serverId: Int? = null,
     val title: String = "",
     val content: String = "",
     val lastEdited: Long = System.currentTimeMillis(),
@@ -35,11 +35,10 @@ class NoteEditorViewModel(
 ) : ViewModel() {
 
     private val _ui = MutableStateFlow(
-        NoteEditorUiState(id = initialId, isNew = initialId == null)
+        NoteEditorUiState(localId = initialId, isNew = initialId == null)
     )
     val ui: StateFlow<NoteEditorUiState> = _ui
 
-    // Track what’s already persisted
     private var persistedTitle: String = ""
     private var persistedContent: String = ""
 
@@ -52,7 +51,8 @@ class NoteEditorViewModel(
                     persistedContent = n.content
                     _ui.update {
                         it.copy(
-                            id = n.id,
+                            localId = n.localId,
+                            serverId = n.serverId,
                             title = n.title,
                             content = n.content,
                             lastEdited = n.lastEdited,
@@ -83,6 +83,8 @@ class NoteEditorViewModel(
             val id = addNote(
                 username,
                 Note(
+                    localId = 0,
+                    serverId = null,
                     title = s.title,
                     content = s.content,
                     lastEdited = now,
@@ -92,14 +94,15 @@ class NoteEditorViewModel(
             )
             persistedTitle = s.title
             persistedContent = s.content
-            _ui.update { it.copy(id = id, isNew = false, lastEdited = now) }
+            _ui.update { it.copy(localId = id, isNew = false, lastEdited = now) }
             syncNotes(username)
             onDone(id)
         } else {
             updateNote(
                 username,
                 Note(
-                    id = s.id!!,
+                    localId = s.localId!!,
+                    serverId = s.serverId,
                     title = s.title,
                     content = s.content,
                     lastEdited = now,
@@ -111,7 +114,7 @@ class NoteEditorViewModel(
             persistedContent = s.content
             _ui.update { it.copy(lastEdited = now) }
             syncNotes(username)
-            onDone(s.id!!)
+            onDone(s.localId!!)
         }
     }
 
@@ -120,11 +123,12 @@ class NoteEditorViewModel(
         val isEmpty = s.title.isBlank() && s.content.isBlank()
         if (isEmpty) {
             val username = userProfileRepo.profile.first().username
-            s.id?.let { id ->
+            s.localId?.let { lid ->
                 deleteNote(
                     username,
                     Note(
-                        id = id,
+                        localId = lid,
+                        serverId = s.serverId,
                         title = "",
                         content = "",
                         lastEdited = s.lastEdited,
@@ -142,18 +146,19 @@ class NoteEditorViewModel(
 
     fun delete(onDone: () -> Unit) = viewModelScope.launch {
         val username = userProfileRepo.profile.first().username
-        _ui.value.id?.let { id ->
+        _ui.value.localId?.let { lid ->
             deleteNote(
                 username,
                 Note(
-                    id = id,
+                    localId = lid,
+                    serverId = _ui.value.serverId,
                     title = "",
                     content = "",
                     lastEdited = _ui.value.lastEdited,
                     username = username
                 )
             )
-            syncNotes(username) // Sync afetr delete
+            syncNotes(username)
         }
         onDone()
     }
