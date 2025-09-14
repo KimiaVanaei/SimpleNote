@@ -11,4 +11,5 @@ interface NotesRepository {
     suspend fun updateNote(username: String, note: Note)
     suspend fun deleteNote(username: String, note: Note)
     suspend fun searchNotes(username: String, query: String): List<Note>
+    suspend fun syncNotes(username: String)
 }
