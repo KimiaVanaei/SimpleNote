@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +27,7 @@ import ir.sharif.simplenote.core.ui.components.LabeledTextField
 import ir.sharif.simplenote.core.ui.components.LabeledPasswordField
 import ir.sharif.simplenote.feature.auth.presentation.RegisterViewModel
 import ir.sharif.simplenote.feature.auth.presentation.RegisterUiState
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,9 +35,9 @@ fun RegisterScreen(
     onRegisterClick: (String, String, String, String, String) -> Unit,
     onBackToLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: RegisterViewModel = viewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    val state: RegisterUiState = viewModel.uiState
+    val state by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -156,13 +159,7 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
-                            onRegisterClick(
-                                state.firstName,
-                                state.lastName,
-                                state.username,
-                                state.email,
-                                state.password
-                            )
+                            viewModel.register()
                         },
                         shape = RoundedCornerShape(100.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -205,6 +202,38 @@ fun RegisterScreen(
                     )
                 }
             }
+        }
+
+        if (state.success) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text("Status") },
+                text = { Text("User Created") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onBackToLoginClick()
+                    }) {
+                        Text("Ok")
+                    }
+                }
+            )
+        }
+
+        if (state.error != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.clearError()
+                },
+                title = { Text("Status") },
+                text = { Text(state.error ?: "Unknown Error") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.clearError()
+                    }) {
+                        Text("Ok")
+                    }
+                }
+            )
         }
     }
 }

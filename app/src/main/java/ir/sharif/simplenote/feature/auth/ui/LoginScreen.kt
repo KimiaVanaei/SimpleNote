@@ -7,6 +7,7 @@ import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.ArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +25,7 @@ import ir.sharif.simplenote.feature.auth.presentation.LoginUiState
 import ir.sharif.simplenote.feature.auth.presentation.LoginViewModel
 import ir.sharif.simplenote.core.ui.components.LabeledTextField
 import ir.sharif.simplenote.core.ui.components.LabeledPasswordField
-
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +33,7 @@ fun LoginScreen(
     onLoginClick: (String, String) -> Unit,
     onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state: LoginUiState = viewModel.uiState
 
@@ -74,10 +75,10 @@ fun LoginScreen(
                     ) {
                         // Email
                         LabeledTextField(
-                            label = "Email Address",
+                            label = "Username",
                             value = state.email,
                             onValueChange = { viewModel.onEmailChange(it) },
-                            placeholder = "Example: johndoe@gmail.com",
+                            placeholder = "Example: @HamifarTaha",
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         )
@@ -100,7 +101,7 @@ fun LoginScreen(
                     ) {
                         // Login Button
                         Button(
-                            onClick = { onLoginClick(state.email, state.password) },
+                            onClick = { viewModel.login() },
                             shape = RoundedCornerShape(100.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = ColorPalette.PrimaryBase,
@@ -161,6 +162,27 @@ fun LoginScreen(
                     }
                 }
             }
+
+            if (state.isLoading) {
+                CircularProgressIndicator()
+            }
+
+            state.error?.let { err ->
+                Text(
+                    text = err,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                )
+            }
+
+            if (state.success) {
+                LaunchedEffect(Unit) {
+                    onLoginClick(state.email, state.password)
+                }
+            }
+
         }
     }
 }

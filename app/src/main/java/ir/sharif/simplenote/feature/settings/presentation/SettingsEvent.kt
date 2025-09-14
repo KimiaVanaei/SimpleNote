@@ -17,4 +17,7 @@ sealed interface SettingsEvent {
     // navigation taps
     data object OnClickEditProfile : SettingsEvent
     data object OnClickChangePassword : SettingsEvent
+    data object ConfirmLogout : SettingsEvent
+    data class ChangePassword(val oldPassword: String, val newPassword: String) : SettingsEvent
+    data object DismissChangePasswordError : SettingsEvent
 }

@@ -9,4 +9,9 @@ data class SettingsUiState(
     // NEW: split notification types
     val emailNotificationsEnabled: Boolean = false,
     val pushNotificationsEnabled: Boolean = false,
+    val isLoggedOut: Boolean = false,
+    val message: String? = null,
+
+    val changePasswordSuccess: Boolean = false,
+    val changePasswordError: String? = null,
 )

@@ -1,63 +1,27 @@
 package ir.sharif.simplenote.feature.settings.ui
 
-
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronLeft
 import ir.sharif.simplenote.core.designsystem.ColorPalette
-import ir.sharif.simplenote.core.designsystem.SimpleNoteTheme
 import ir.sharif.simplenote.core.designsystem.TextStyles
+import ir.sharif.simplenote.feature.settings.presentation.SettingsEvent
+import ir.sharif.simplenote.feature.settings.presentation.SettingsViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import ir.sharif.simplenote.core.ui.components.LabeledPasswordField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +29,9 @@ fun ChangePasswordScreen(
     onNavigateBack: () -> Unit,
     onSubmit: (current: String, new: String) -> Unit = { _, _ -> }
 ) {
+    val viewModel: SettingsViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
     var currentPassword by rememberSaveable { mutableStateOf("") }
     var newPassword by rememberSaveable { mutableStateOf("") }
     var retypePassword by rememberSaveable { mutableStateOf("") }
@@ -160,7 +127,6 @@ fun ChangePasswordScreen(
                     onValueChange = { newPassword = it },
                     visible = showNew,
                     onToggleVisibility = { showNew = !showNew },
-                    helper = "Password should contain a-z, A-Z, 0-9",
                     imeAction = ImeAction.Next
                 )
 
@@ -190,7 +156,10 @@ fun ChangePasswordScreen(
 
             // Submit
             Button(
-                onClick = { onSubmit(currentPassword, newPassword) },
+                onClick = {
+                    Log.d("ChangePasswordScreen", "Submit clicked with old=$currentPassword, new=$newPassword")
+                    viewModel.onEvent(SettingsEvent.ChangePassword(currentPassword, newPassword))
+                },
                 enabled = canSubmit,
                 shape = RoundedCornerShape(100.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -210,72 +179,32 @@ fun ChangePasswordScreen(
             }
         }
     }
-}
 
-@Composable
-private fun LabeledPasswordField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    visible: Boolean,
-    onToggleVisibility: () -> Unit,
-    helper: String? = null,
-    imeAction: ImeAction,
-    onImeDone: () -> Unit = {}
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, style = TextStyles.textBaseBold, color = ColorPalette.NeutralBlack)
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyles.textBase,
-            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val icon = if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
-                val desc = if (visible) "Hide password" else "Show password"
-                IconButton(onClick = onToggleVisibility) {
-                    Icon(imageVector = icon, contentDescription = desc, tint = ColorPalette.NeutralDarkGrey)
+    if (uiState.changePasswordSuccess == true) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text("Status") },
+            text = { Text(uiState.message ?: "Password Successfully Changed") },
+            confirmButton = {
+                TextButton(onClick = { onNavigateBack() }) {
+                    Text("Ok")
                 }
-            },
-            placeholder = { Text(text = "*********", color = ColorPalette.NeutralBaseGrey) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = imeAction
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { onImeDone() }
-            ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = ColorPalette.NeutralWhite,
-                unfocusedContainerColor = ColorPalette.NeutralWhite,
-                disabledContainerColor = ColorPalette.NeutralWhite,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = ColorPalette.NeutralBaseGrey,
-                    shape = RoundedCornerShape(12.dp)
-                )
+            }
         )
-        if (helper != null) {
-            Text(
-                text = helper,
-                style = TextStyles.text2Xs,
-                color = ColorPalette.NeutralBaseGrey,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-private fun ChangePasswordScreenPreview() {
-    SimpleNoteTheme {
-        ChangePasswordScreen(onNavigateBack = {})
+    if (!uiState.changePasswordSuccess && uiState.changePasswordError != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onEvent(SettingsEvent.DismissChangePasswordError) },
+            title = { Text("Status") },
+            text = { Text(uiState.changePasswordError ?: "Failed at Changing Password") },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.onEvent(SettingsEvent.DismissChangePasswordError) }
+                ) {
+                    Text("Ok")
+                }
+            }
+        )
     }
 }

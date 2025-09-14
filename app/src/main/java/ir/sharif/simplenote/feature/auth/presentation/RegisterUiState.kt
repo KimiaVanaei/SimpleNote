@@ -8,5 +8,8 @@ data class RegisterUiState(
     val password: String = "",
     val retypePassword: String = "",
     val showPassword: Boolean = false,
-    val showRetype: Boolean = false
+    val showRetype: Boolean = false,
+    val isLoading: Boolean = false,
+    val success: Boolean = false,
+    val error: String? = null
 )
