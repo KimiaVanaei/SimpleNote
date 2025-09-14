@@ -29,6 +29,7 @@ class NoteEditorViewModel(
     private val addNote: AddNoteUseCase,
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
+    private val syncNotes: SyncNotesUseCase,   // Added
     initialId: Int?
 ) : ViewModel() {
 
@@ -70,7 +71,6 @@ class NoteEditorViewModel(
         return s.isNew || s.title != persistedTitle || s.content != persistedContent
     }
 
-    /** Save ONLY if there are changes. Calls onDone with the note id when a save actually happened. */
     fun save(onDone: (Int) -> Unit) = viewModelScope.launch {
         val s = _ui.value
         if (!hasChanges()) return@launch
@@ -92,6 +92,7 @@ class NoteEditorViewModel(
             persistedTitle = s.title
             persistedContent = s.content
             _ui.update { it.copy(id = id, isNew = false, lastEdited = now) }
+            syncNotes(username)
             onDone(id)
         } else {
             updateNote(
@@ -108,11 +109,11 @@ class NoteEditorViewModel(
             persistedTitle = s.title
             persistedContent = s.content
             _ui.update { it.copy(lastEdited = now) }
+            syncNotes(username)
             onDone(s.id!!)
         }
     }
 
-    /** Back/up: delete if empty; else save only if changed; else just exit. */
     fun onBack(onDone: () -> Unit) = viewModelScope.launch {
         val s = _ui.value
         val isEmpty = s.title.isBlank() && s.content.isBlank()
@@ -151,6 +152,7 @@ class NoteEditorViewModel(
                     username = username
                 )
             )
+            syncNotes(username) // Sync afetr delete
         }
         onDone()
     }
