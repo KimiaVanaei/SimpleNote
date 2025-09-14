@@ -54,13 +54,18 @@ class NotesViewModel(
         val now = System.currentTimeMillis()
         viewModelScope.launch {
             usernameFlow.firstOrNull()?.let { username ->
-                val id = addNote(username, Note(
-                    title = "",
-                    content = "",
-                    lastEdited = now,
-                    isSynced = false,
-                    username = username
-                ))
+                val id = addNote(
+                    username,
+                    Note(
+                        localId = 0,
+                        serverId = null,
+                        title = "",
+                        content = "",
+                        lastEdited = now,
+                        isSynced = false,
+                        username = username
+                    )
+                )
                 onCreated(id)
             }
         }
